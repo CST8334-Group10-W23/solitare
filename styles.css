@@ -1,0 +1,28 @@
+* {
+  color: white;
+}
+
+body {
+background-image: url("images/table-background-alt.jpg");
+}
+
+.pile {
+  border-style: dashed;
+  border-width: 2px;
+  border-color: limegreen;
+  min-width: 10rem;
+}
+
+.blank {
+  width: 10rem;
+}
+
+table {
+  min-height: 16.87rem;
+  margin: 2rem 0 4rem 2rem;
+}
+
+img {
+  width: 10rem;
+  height: 16.87rem;
+}
