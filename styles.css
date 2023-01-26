@@ -1,28 +1,105 @@
 * {
-  color: white;
+  color: yellow;
 }
 
 body {
 background-image: url("images/table-background-alt.jpg");
 }
 
-.pile {
+img {
+  width: 9rem;
+  height: 15.183rem;
+}
+
+td {
+  min-width: 9rem; 
   border-style: dashed;
   border-width: 2px;
   border-color: limegreen;
-  min-width: 10rem;
+  
 }
 
+/* Sets a blank space in a table */
 .blank {
-  width: 10rem;
+  border-style: none;
 }
 
 table {
-  min-height: 16.87rem;
-  margin: 2rem 0 4rem 2rem;
+    min-height: 15.18rem;
+    border-spacing: 2rem;
 }
 
-img {
-  width: 10rem;
-  height: 16.87rem;
+/* Tableau (lower) tables */
+
+.container {
+    position: relative;
+}
+
+.tableau-row1 {
+    position: absolute;
+}
+
+/* Change to hidden to remove borders */
+.no-border td {
+    border-style: dashed;
+}
+
+.tableau-row2 {
+    position: absolute;
+    top: 2rem;
+}
+
+.tableau-row3 {
+    position: absolute;
+    top: 4rem;
+}
+
+.tableau-row4 {
+    position: absolute;
+    top: 6rem;
+}
+
+.tableau-row5 {
+   position: absolute;
+    top: 8rem;
+}
+
+.tableau-row6 {
+    position: absolute;
+    top: 10rem;
+}
+
+.tableau-row7 {
+    position: absolute;
+    top: 12rem;
+}
+
+.tableau-row8 {
+    position: absolute;
+    top: 12rem;
+}
+
+.tableau-row9 {
+    position: absolute;
+    top: 14rem;
+}
+
+.tableau-row10 {
+    position: absolute;
+    top: 16rem;
+}
+
+.tableau-row11 {
+    position: absolute;
+    top: 18rem;
+}
+
+.tableau-row12 {
+    position: absolute;
+    top: 20rem;
+}
+
+.tableau-row13 {
+    position: absolute;
+    top: 22rem;
 }
