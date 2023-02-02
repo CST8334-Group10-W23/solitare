@@ -64,10 +64,22 @@ console.log(deck.shuffle().deck);
 
 // TESTING
 
+// stock pile
+const stock = stockPile();
 
-const p = stockPile();
-console.log(p);
+// tableau piles
+const tableau = [[],[],[],[],[],[],[]];
 
+// send card to tableau one
+tableau[0].push(stock[stock.length-1]); 
+
+// remove card from stock pile
+stock.pop();
+
+// change the img src to the correct frontimage
+document.getElementById("test").src = tableau[0][tableau[0].length-1].frontImage;
+
+console.log(tableau);
 
 
 
