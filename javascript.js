@@ -71,31 +71,29 @@ const stock = stockPile();
 const tableau = [[],[],[],[],[],[],[]];
 let x = 0;
 
-// loop through tableau array and place cards into piles
-setupTableau(0);
-setupTableau(1);
-setupTableau(2);
-setupTableau(3);
-setupTableau(4);
-setupTableau(5);
-setupTableau(6);
-
+setupTableau()
 console.log(tableau);
-
-
-// image changing, needs tweaking
-//    x = i + 1;
-//    y = x + 1;
     
 // change the img src to the correct back image
 //    document.getElementById("tableau-"+y+"-"+x).src = tableau[0][tableau[i].length-1].backImage;
-    
-// change the img src to the correct front image
-//    document.getElementById("tableau-1-"+x).src = tableau[0][tableau[i].length-1].frontImage;
+
+// setup tableau
+function setupTableau() {
+    for (let i=0;i < 7;i++) {
+    x +=1;
+    dealCards(i);
+    displayTopCard(i, x)
+    }
+}
+
+// displays top card of tableau pile
+function displayTopCard(i,x) {
+    document.getElementById("tableau-"+x+"-"+x).src = tableau[i][tableau[i].length-1].frontImage;
+}
 
 // loops through tableau piles from left to right
 // and places cards into tableau piles
-function setupTableau(num) {
+function dealCards(num) {
     // loops through piles
     for (let i=num; i < 7; i++) {
         
@@ -104,7 +102,7 @@ function setupTableau(num) {
         
     // remove card from stock pile
     stock.pop();
-    }
+    }    
 }
 
 // create card objects from the deck
