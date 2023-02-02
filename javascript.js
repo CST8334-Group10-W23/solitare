@@ -69,49 +69,43 @@ const stock = stockPile();
 
 // tableau piles
 const tableau = [[],[],[],[],[],[],[]];
+let x = 0;
 
-// send card to tableau one
-tableau[0].push(stock[stock.length-1]); 
-
-// remove card from stock pile
-stock.pop();
-
-// change the img src to the correct frontimage
-document.getElementById("test").src = tableau[0][tableau[0].length-1].frontImage;
+// loop through tableau array and place cards into piles
+setupTableau(0);
+setupTableau(1);
+setupTableau(2);
+setupTableau(3);
+setupTableau(4);
+setupTableau(5);
+setupTableau(6);
 
 console.log(tableau);
 
 
+// image changing, needs tweaking
+//    x = i + 1;
+//    y = x + 1;
+    
+// change the img src to the correct back image
+//    document.getElementById("tableau-"+y+"-"+x).src = tableau[0][tableau[i].length-1].backImage;
+    
+// change the img src to the correct front image
+//    document.getElementById("tableau-1-"+x).src = tableau[0][tableau[i].length-1].frontImage;
 
-/*
-const tableauOne = [];
-const tableauTwo = [];
-
-// call set card function
-setCard(deck);
-
-// send card to tableauOne
-tableauOne.push(card); 
-
-// changes the img src to the correct front image of the card
-document.getElementById("test").src = card.frontImage;
-
-// remove the card from the deck
-deck.deck.pop();
-<<<<<<< HEAD
-
-
-setCard(deck);
-tableauTwo.push(card);
-document.getElementById("test2").src = card.frontImage;
-deck.deck.pop();
-
-console.log(tableauOne);
-console.log(tableauTwo);
-console.log(deck.deck);
-
-*/
-
+// loops through tableau piles from left to right
+// and places cards into tableau piles
+function setupTableau(num) {
+    // loops through piles
+    for (let i=num; i < 7; i++) {
+        
+    // place card into tableau pile
+    tableau[i].push(stock[stock.length-1]);
+        
+    // remove card from stock pile
+    stock.pop();
+    }
+}
 
 // create card objects from the deck
 function setCard(deck) {
@@ -162,4 +156,3 @@ function stockPile() {
     // return the stock array
     return stock;
 }
-
