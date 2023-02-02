@@ -61,8 +61,10 @@ const deck = new Deck();
 console.log(deck.shuffle().deck);
 
 
-
-// TESTING
+// variable names of counters in the for loops should probably be more clear
+// daniel will *hopefully* clean it up after the first assignment
+// x identifies the tableau pile id
+// i identifies the array pile
 
 // stock pile
 const stock = stockPile();
@@ -74,19 +76,33 @@ let x = 0;
 setupTableau()
 console.log(tableau);
     
-// change the img src to the correct back image
-//    document.getElementById("tableau-"+y+"-"+x).src = tableau[0][tableau[i].length-1].backImage;
-
 // setup tableau
 function setupTableau() {
     for (let i=0;i < 7;i++) {
-    x +=1;
+    x = i+1;
     dealCards(i);
-    displayTopCard(i, x)
+    displayBottomCards(i,x);
+    displayTopCard(i,x);
     }
 }
 
-// displays top card of tableau pile
+// displays back image of bottom cards from the tableau piles
+function displayBottomCards(i,x) {
+    // any tableau piles with more than one card
+    if (tableau[i].length > 1) {
+        // first loop
+        // "a" identifies the card position in the array
+        for (let a=0; a < tableau[i].length-1; a++){
+            // second loop
+            // "b" identifies the tableau card id
+            for (let b=1; b < tableau[i].length; b++) {
+                document.getElementById("tableau-"+x+"-"+b).src = tableau[i][a].backImage;
+            }
+        }
+    }
+}
+
+// displays front image of top cards from the tableau piles
 function displayTopCard(i,x) {
     document.getElementById("tableau-"+x+"-"+x).src = tableau[i][tableau[i].length-1].frontImage;
 }
