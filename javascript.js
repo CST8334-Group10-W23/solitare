@@ -86,6 +86,7 @@ document.getElementById("test").src = card.frontImage;
 
 // remove the card from the deck
 deck.deck.pop();
+<<<<<<< HEAD
 
 
 setCard(deck);
@@ -149,3 +150,4 @@ function stockPile() {
     // return the stock array
     return stock;
 }
+
