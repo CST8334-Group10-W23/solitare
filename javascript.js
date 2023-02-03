@@ -104,7 +104,13 @@ function displayBottomCards(i,x) {
 
 // displays front image of top cards from the tableau piles
 function displayTopCard(i,x) {
-    document.getElementById("tableau-"+x+"-"+x).src = tableau[i][tableau[i].length-1].frontImage;
+    try {
+        document.getElementById("tableau-"+x+"-"+x).src = tableau[i][tableau[i].length-1].frontImage;
+    }
+    // displays nothing as the img src if the tableau pile is 0
+    catch (err) {
+        document.getElementById("tableau-"+x+"-"+x).src = "";
+    }
 }
 
 // loops through tableau piles from left to right
@@ -170,3 +176,20 @@ function stockPile() {
     // return the stock array
     return stock;
 }
+
+// TESTING
+
+// can't click on elements that are underneath another element
+// this could be because of the table's, td's, and img's blocking the elements underneath?
+
+// doesn't work
+document.getElementById("tableau-1-1").addEventListener("click", function(){ alert("clicked on tableau-1-1"); });
+// doesn't work
+document.getElementById("tableau-1-12").addEventListener("click", function(){ alert("clicked on tableau-1-12"); });
+// works
+document.getElementById("tableau-1-13").addEventListener("click", function(){ alert("clicked on tableau-1-13"); });
+// works
+document.getElementById("hand").addEventListener("click", function(){ alert("clicked on hand pile"); });
+
+
+
