@@ -183,6 +183,16 @@ function stockPile() {
 function moveCard(moveTo, moveFrom) {
     // move card from one tableau array to another 
     tableau[moveTo][tableau[moveTo].length] = tableau[moveFrom].pop();
+    
+    // removes front image of the moveFrom tableau pile
+    document.getElementById("tableau-"+(moveFrom+1)+"-"+(tableau[moveFrom].length+1)).src = "";
+    
+    // displays next front image of the moveFrom tableau pile
+    document.getElementById("tableau-"+(moveFrom+1)+"-"+tableau[moveFrom].length).src = tableau[moveFrom][tableau[moveFrom].length-1].frontImage;
+    
+    // end cards need to be fixed a bit, but overall it works!
+    // displays the moveFrom card in the moveTo tableau pile
+    document.getElementById("tableau-"+(moveTo+1)+"-"+tableau[moveTo].length).src = tableau[moveTo][tableau[moveTo].length-1].frontImage;
 }
 
 // can't click on elements that are underneath another element
