@@ -179,6 +179,12 @@ function stockPile() {
 
 // TESTING
 
+// move card
+function moveCard(moveTo, moveFrom) {
+    // move card from one tableau array to another 
+    tableau[moveTo][tableau[moveTo].length] = tableau[moveFrom].pop();
+}
+
 // can't click on elements that are underneath another element
 // this could be because of the table's, td's, and img's blocking the elements underneath?
 
