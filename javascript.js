@@ -177,23 +177,56 @@ function stockPile() {
     return stock;
 }
 
-// TESTING
+// move most front card of tableau pile to another pile
+function moveTableauCard(moveFrom, moveTo) {
+    
+    let moveToColor, moveFromColor;
+    
+    // try to retrieve color from top card of moveFrom tableau pile
+    try {
+        moveFromColor = tableau[moveFrom][tableau[moveFrom].length-1].color;
+    }
+    // catch if there is no card (empty tableau pile)
+    catch (err) {
+        moveFromColor = null;
+    }
+    
+    // try to retrieve color from top card of moveTo tableau pile
+    try{
+        moveToColor = tableau[moveTo][tableau[moveTo].length-1].color;
+    }
+    // catch if there is no card (empty tableau pile)
+    catch (err) {
+        moveToColor = null;
+    }
+        
+    // card colors are the same, display alert
+    if (moveToColor == moveFromColor) {
+        alert("Cannot move card! \nStacking cards on a tableau pile must be of alternating colors");
+    }
+    // card colors are not the same, proceed
+    else {
+        // move card from one tableau array to another 
+        tableau[moveTo][tableau[moveTo].length] = tableau[moveFrom].pop();
 
-// move card
-function moveCard(moveTo, moveFrom) {
-    // move card from one tableau array to another 
-    tableau[moveTo][tableau[moveTo].length] = tableau[moveFrom].pop();
-    
-    // removes front image of the moveFrom tableau pile
-    document.getElementById("tableau-"+(moveFrom+1)+"-"+(tableau[moveFrom].length+1)).src = "";
-    
-    // displays next front image of the moveFrom tableau pile
-    document.getElementById("tableau-"+(moveFrom+1)+"-"+tableau[moveFrom].length).src = tableau[moveFrom][tableau[moveFrom].length-1].frontImage;
-    
-    // end cards need to be fixed a bit, but overall it works!
-    // displays the moveFrom card in the moveTo tableau pile
-    document.getElementById("tableau-"+(moveTo+1)+"-"+tableau[moveTo].length).src = tableau[moveTo][tableau[moveTo].length-1].frontImage;
+        // removes front image of the moveFrom tableau pile
+        document.getElementById("tableau-"+(moveFrom+1)+"-"+(tableau[moveFrom].length+1)).src = "";
+
+        // displays next front image of the moveFrom tableau pile
+        try {
+            document.getElementById("tableau-"+(moveFrom+1)+"-"+tableau[moveFrom].length).src = tableau[moveFrom][tableau[moveFrom].length-1].frontImage;
+        }
+        // catch if there is no card (empty pile)
+        catch (err){
+            document.getElementById("tableau-"+(moveFrom+1)+"-1").src = "";
+        }
+        
+        // displays the moveFrom card in the moveTo tableau pile
+        document.getElementById("tableau-"+(moveTo+1)+"-"+tableau[moveTo].length).src = tableau[moveTo][tableau[moveTo].length-1].frontImage;
+    }
 }
+
+// TESTING
 
 // can't click on elements that are underneath another element
 // this could be because of the table's, td's, and img's blocking the elements underneath?
@@ -206,6 +239,3 @@ document.getElementById("tableau-1-12").addEventListener("click", function(){ al
 document.getElementById("tableau-1-13").addEventListener("click", function(){ alert("clicked on tableau-1-13"); });
 // works
 document.getElementById("hand").addEventListener("click", function(){ alert("clicked on hand pile"); });
-
-
-
