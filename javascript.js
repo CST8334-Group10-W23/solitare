@@ -73,6 +73,9 @@ const stock = stockPile();
 const tableau = [[],[],[],[],[],[],[]];
 let x = 0;
 
+// foundation piles
+const foundation = [[],[],[],[]];
+
 setupTableau()
 console.log(tableau);
     
@@ -220,12 +223,12 @@ function moveTableauCard(moveFrom, moveTo) {
 
 // updates tableau display after a moveTableauCard has occurred
 function updateTableau(moveFrom, moveTo) {
-    showNextFrontImage(moveFrom, moveTo);
-    removeFrontImage(moveFrom, moveTo);
-    showMovedFrontImage(moveFrom, moveTo);  
+    showNextFrontImage(moveFrom);
+    removeFrontImage(moveFrom);
+    showMovedFrontImage(moveTo);  
 }
 
-function showNextFrontImage(moveFrom, moveTo) {
+function showNextFrontImage(moveFrom) {
 // displays next front image of the moveFrom tableau pile
     try {
         document.getElementById("tableau-"+(moveFrom+1)+"-"+tableau[moveFrom].length).src = tableau[moveFrom][tableau[moveFrom].length-1].frontImage;
@@ -236,12 +239,12 @@ function showNextFrontImage(moveFrom, moveTo) {
     }
 }
 
-function removeFrontImage(moveFrom, moveTo) {
+function removeFrontImage(moveFrom) {
 // removes front image of the moveFrom tableau pile
     document.getElementById("tableau-"+(moveFrom+1)+"-"+(tableau[moveFrom].length+1)).src = "";
 }
 
-function showMovedFrontImage(moveFrom, moveTo) {
+function showMovedFrontImage(moveTo) {
 // displays the moveFrom card in the moveTo tableau pile
     document.getElementById("tableau-"+(moveTo+1)+"-"+tableau[moveTo].length).src = tableau[moveTo][tableau[moveTo].length-1].frontImage;    
 }
@@ -255,6 +258,34 @@ function fillTableauSpot(moveFrom, moveTo) {
     } else { 
         alert("Cannot move card! \nOnly kings can fill an empty tableau spot");
     }  
+} 
+
+// displays the foundation front card image
+function displayFoundationImage(foundationPile) {
+    document.getElementById("foundation-"+(foundationPile+1)).src = foundation[foundationPile][foundation[foundationPile].length-1].frontImage;
+}
+
+// foundations can only be fileld starting with an ace
+function canFillFoundation(foundationPile, moveFrom) { 
+
+// checks if the foundation is at 0
+  if (foundation[foundationPile].length === 0) {
+    // checks if the card value is an ace
+    if (tableau[moveFrom][tableau[moveFrom].length-1].value === "ace") {
+        
+        // moves the moveFrom tableau card to the foundationPile
+        foundation[foundationPile][foundation[foundationPile].length] = tableau[moveFrom].pop();
+        // removes the tableau front card image in the moveFrom pile
+        removeFrontImage(moveFrom);
+        // displays the next tableau front card image in the moveFrom pile
+        showNextFrontImage(moveFrom);
+        // displays foundation front card image        
+        displayFoundationImage(foundationPile);
+    } 
+    else { 
+      alert("Cannot move card! \nOnly aces can be the base of a foundation");
+    }
+  }  
 } 
 
 // TESTING
