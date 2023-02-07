@@ -181,7 +181,7 @@ function stockPile() {
 function moveTableauCard(moveFrom, moveTo) {
     
     let moveToColor, moveFromColor;
-    
+        
     // try to retrieve color from top card of moveFrom tableau pile
     try {
         moveFromColor = tableau[moveFrom][tableau[moveFrom].length-1].color;
@@ -199,32 +199,63 @@ function moveTableauCard(moveFrom, moveTo) {
     catch (err) {
         moveToColor = null;
     }
-        
+    
     // card colors are the same, display alert
     if (moveToColor == moveFromColor) {
         alert("Cannot move card! \nStacking cards on a tableau pile must be of alternating colors");
     }
     // card colors are not the same, proceed
     else {
-        // move card from one tableau array to another 
-        tableau[moveTo][tableau[moveTo].length] = tableau[moveFrom].pop();
-
-        // removes front image of the moveFrom tableau pile
-        document.getElementById("tableau-"+(moveFrom+1)+"-"+(tableau[moveFrom].length+1)).src = "";
-
-        // displays next front image of the moveFrom tableau pile
-        try {
-            document.getElementById("tableau-"+(moveFrom+1)+"-"+tableau[moveFrom].length).src = tableau[moveFrom][tableau[moveFrom].length-1].frontImage;
+        if (tableau[moveTo].length === 0) {
+            // spare tableau spots can only be filled with kings
+            fillTableauSpot(moveFrom, moveTo);
         }
-        // catch if there is no card (empty pile)
-        catch (err){
-            document.getElementById("tableau-"+(moveFrom+1)+"-1").src = "";
+        else {
+            // move card from one tableau array to another 
+            tableau[moveTo][tableau[moveTo].length] = tableau[moveFrom].pop();
+            updateTableau(moveFrom, moveTo);
         }
-        
-        // displays the moveFrom card in the moveTo tableau pile
-        document.getElementById("tableau-"+(moveTo+1)+"-"+tableau[moveTo].length).src = tableau[moveTo][tableau[moveTo].length-1].frontImage;
     }
 }
+
+// updates tableau display after a moveTableauCard has occurred
+function updateTableau(moveFrom, moveTo) {
+    showNextFrontImage(moveFrom, moveTo);
+    removeFrontImage(moveFrom, moveTo);
+    showMovedFrontImage(moveFrom, moveTo);  
+}
+
+function showNextFrontImage(moveFrom, moveTo) {
+// displays next front image of the moveFrom tableau pile
+    try {
+        document.getElementById("tableau-"+(moveFrom+1)+"-"+tableau[moveFrom].length).src = tableau[moveFrom][tableau[moveFrom].length-1].frontImage;
+    }
+    // catch if there is no card (empty pile)
+    catch (err){
+        document.getElementById("tableau-"+(moveFrom+1)+"-1").src = "";
+    }
+}
+
+function removeFrontImage(moveFrom, moveTo) {
+// removes front image of the moveFrom tableau pile
+    document.getElementById("tableau-"+(moveFrom+1)+"-"+(tableau[moveFrom].length+1)).src = "";
+}
+
+function showMovedFrontImage(moveFrom, moveTo) {
+// displays the moveFrom card in the moveTo tableau pile
+    document.getElementById("tableau-"+(moveTo+1)+"-"+tableau[moveTo].length).src = tableau[moveTo][tableau[moveTo].length-1].frontImage;    
+}
+
+// spare tableau spots can only be filled with kings
+function fillTableauSpot(moveFrom, moveTo) { 
+    if (tableau[moveFrom][tableau[moveFrom].length-1].value === "king") {
+        // remove card from moveFrom pile and move to moveTo pile
+        tableau[moveTo][tableau[moveTo].length] = tableau[moveFrom].pop();
+        updateTableau(moveFrom, moveTo);
+    } else { 
+        alert("Cannot move card! \nOnly kings can fill an empty tableau spot");
+    }  
+} 
 
 // TESTING
 
