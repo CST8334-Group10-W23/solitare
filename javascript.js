@@ -76,6 +76,10 @@ let x = 0;
 // foundation piles
 const foundation = [[],[],[],[]];
 
+
+// waste pile
+const waste = [];
+
 setupTableau()
 console.log(tableau);
     
@@ -288,27 +292,40 @@ function canFillFoundation(foundationPile, moveFrom) {
   }  
 } 
 
-// TESTING
 
-// waste pile
-const waste = [];
 
 // click listener for stock pile
 document.getElementById("stock").addEventListener("click", function() { clickStockpile() });
 
 // function to move stock pile card to the waste pile
 function clickStockpile() {
+    //refill stock pile if empty upon click
+    if (stock.length === 0) {
+        refillStockpile();
+    }
+    else {
     // puts top stock pile card to the waste pile
     waste[waste.length] = stock.pop();
     // displays the front image of the top waste pile card
-    document.getElementById("waste").src = waste[waste.length-1].frontImage;    
+    document.getElementById("waste").src = waste[waste.length-1].frontImage;  
+    }
+      
 }
 
 // function to refill the stock pile when empty
 function refillStockpile() {
-    
+    // get the length of the waste array
+    let wasteLength = waste.length;
+    // cycle through and put the waste pile back into the stock pile
+    // keeping the original sequence
+    for (let i=0; i < wasteLength; i++) {
+        stock[stock.length] = waste.pop();
+    }
+    // remove the front image on the top waste pile card
+    document.getElementById("waste").src = "";
 }
 
+// TESTING
 
 // can't click on elements that are underneath another element
 // this could be because of the table's, td's, and img's blocking the elements underneath?
