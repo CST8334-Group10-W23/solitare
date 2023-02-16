@@ -290,6 +290,26 @@ function canFillFoundation(foundationPile, moveFrom) {
 
 // TESTING
 
+// waste pile
+const waste = [];
+
+// click listener for stock pile
+document.getElementById("stock").addEventListener("click", function() { clickStockpile() });
+
+// function to move stock pile card to the waste pile
+function clickStockpile() {
+    // puts top stock pile card to the waste pile
+    waste[waste.length] = stock.pop();
+    // displays the front image of the top waste pile card
+    document.getElementById("waste").src = waste[waste.length-1].frontImage;    
+}
+
+// function to refill the stock pile when empty
+function refillStockpile() {
+    
+}
+
+
 // can't click on elements that are underneath another element
 // this could be because of the table's, td's, and img's blocking the elements underneath?
 
@@ -299,5 +319,4 @@ document.getElementById("tableau-1-1").addEventListener("click", function(){ ale
 document.getElementById("tableau-1-12").addEventListener("click", function(){ alert("clicked on tableau-1-12"); });
 // works
 document.getElementById("tableau-1-13").addEventListener("click", function(){ alert("clicked on tableau-1-13"); });
-// works
-document.getElementById("hand").addEventListener("click", function(){ alert("clicked on hand pile"); });
+
