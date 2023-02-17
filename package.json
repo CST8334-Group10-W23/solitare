@@ -1,10 +1,10 @@
 {
-  "name": "solitare",
+  "name": "@longo-d/solitare",
   "version": "1.0.0",
   "description": "CST8334 Software Development Project",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron ."
   },
   "repository": {
     "type": "git",
@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/CST8334-Group10-W23/solitare/issues"
   },
-  "homepage": "https://github.com/CST8334-Group10-W23/solitare#readme"
+  "homepage": "https://github.com/CST8334-Group10-W23/solitare#readme",
+  "devDependencies": {
+    "electron": "^23.1.0",
+    "electron-manager": "^0.0.7"
+  }
 }
