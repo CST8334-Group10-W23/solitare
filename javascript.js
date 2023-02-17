@@ -104,6 +104,7 @@ function displayBottomCards(i,x) {
             // "b" identifies the tableau card id
             for (let b=1; b < tableau[i].length; b++) {
                 document.getElementById("tableau-"+x+"-"+b).src = tableau[i][a].backImage;
+                document.getElementById("tableau-"+x+"-"+b).style.display = "";
             }
         }
     }
@@ -113,10 +114,12 @@ function displayBottomCards(i,x) {
 function displayTopCard(i,x) {
     try {
         document.getElementById("tableau-"+x+"-"+x).src = tableau[i][tableau[i].length-1].frontImage;
+        document.getElementById("tableau-"+x+"-"+x).style.display = "";
     }
     // displays nothing as the img src if the tableau pile is 0
     catch (err) {
-        document.getElementById("tableau-"+x+"-"+x).src = "";
+        document.getElementById("tableau-"+x+"-"+x).style = "none";
+        document.getElementById("tableau-"+x+"-"+x).style.zIndex = "-1";
     }
 }
 
@@ -337,3 +340,21 @@ document.getElementById("tableau-1-12").addEventListener("click", function(){ al
 // works
 document.getElementById("tableau-1-13").addEventListener("click", function(){ alert("clicked on tableau-1-13"); });
 
+// Index/Hidden test -------------
+
+//document.getElementById("test").hidden = "true";
+
+//var t1 = document.getElementById("test");
+//if (t1.firstElementChild.src = "") {
+//    t1.hidden = "true";
+//}
+
+var list = document.getElementById("container").getElementsByTagName("td");
+for (i = 0; i < list.length; i++) {
+    let image = list[i].firstElementChild;
+    if (image.style.display == "none") {
+        list[i].style.zIndex = "-1";
+    }
+}
+
+// Another option to try: surround <img> with <object type="image/jpeg"></object> (gets rid of broken img icon and alt text, but won't load card from js). Will also require setting index to -1

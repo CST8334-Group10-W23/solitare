@@ -7,12 +7,12 @@ background-image: url("images/table-background-alt.jpg");
 }
 
 img {
-  width: 9rem;
-  height: 15.183rem;
+  width: 8.1rem;
+  height: 13.66rem;
 }
 
 td {
-  min-width: 9rem; 
+  min-width: 8.1rem; 
   border-style: dashed;
   border-width: 2px;
   border-color: limegreen;
@@ -25,18 +25,16 @@ td {
 }
 
 table {
-    min-height: 15.18rem;
-    border-spacing: 2rem;
+    min-height: 13.66rem;
+    border-spacing: 1.35rem;
+    display: inline-block;
 }
 
-/* Tableau (lower) tables */
+/* Tableau tables 
+   ============== */
 
 .container {
     position: relative;
-}
-
-.tableau-row1 {
-    position: absolute;
 }
 
 /* Change to hidden to remove borders */
@@ -44,62 +42,100 @@ table {
     border-style: dashed;
 }
 
-.tableau-row2 {
+.tableau-row1 {
     position: absolute;
-    top: 2rem;
 }
 
-.tableau-row3 {
+.tableau-row2 {
     position: absolute;
     top: 4rem;
 }
 
-.tableau-row4 {
+.tableau-row3 {
     position: absolute;
     top: 6rem;
 }
 
+.tableau-row4 {
+    position: absolute;
+    top: 8rem;
+}
+
 .tableau-row5 {
    position: absolute;
-    top: 8rem;
+    top: 10rem;
 }
 
 .tableau-row6 {
     position: absolute;
-    top: 10rem;
+    top: 12rem;
 }
 
 .tableau-row7 {
     position: absolute;
-    top: 12rem;
+    top: 14rem;
 }
 
 .tableau-row8 {
     position: absolute;
-    top: 12rem;
+    top: 16rem;
 }
 
 .tableau-row9 {
     position: absolute;
-    top: 14rem;
+    top: 18rem;
 }
 
 .tableau-row10 {
     position: absolute;
-    top: 16rem;
+    top: 20rem;
 }
 
 .tableau-row11 {
     position: absolute;
-    top: 18rem;
+    top: 22rem;
 }
 
 .tableau-row12 {
     position: absolute;
-    top: 20rem;
+    top: 24rem;
 }
 
 .tableau-row13 {
     position: absolute;
-    top: 22rem;
+    top: 26rem;
 }
+
+/* Table columns
+   ============= */
+
+
+.tableau-col1 {
+    margin-left: -1.25rem;
+}
+
+.tableau-col2 {
+    margin-left: 7rem;
+}
+
+.tableau-col3 {
+    margin-left: 7rem;
+}
+
+.tableau-col4 {
+    margin-left: 7rem;
+}
+
+.tableau-col5 {
+    margin-left: 7rem;
+}
+
+.tableau-col6 {
+    margin-left: 7rem;
+}
+
+.tableau-col7 {
+    margin-left: 7rem;
+}
+
+/*Make <tr>s stack on top of each other as is done for tables above? */
