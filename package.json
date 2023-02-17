@@ -1,0 +1,22 @@
+{
+  "name": "solitare",
+  "version": "1.0.0",
+  "description": "CST8334 Software Development Project",
+  "main": "main.js",
+  "publishConfig": {
+      "registry": "https://npm.pkg.github.com/@CST8334-Group10-W23"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CST8334-Group10-W23/solitare.git"
+  },
+  "author": "Group 10",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CST8334-Group10-W23/solitare/issues"
+  },
+  "homepage": "https://github.com/CST8334-Group10-W23/solitare#readme"
+}
