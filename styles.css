@@ -16,7 +16,6 @@ td {
   border-style: dashed;
   border-width: 2px;
   border-color: limegreen;
-  
 }
 
 /* Sets a blank space in a table */
@@ -39,7 +38,7 @@ table {
 
 /* Change to hidden to remove borders */
 .no-border td {
-    border-style: dashed;
+    border-style: hidden;
 }
 
 .tableau-row1 {
@@ -108,7 +107,6 @@ table {
 
 /* Table columns
    ============= */
-
 
 .tableau-col1 {
     margin-left: -1.25rem;
