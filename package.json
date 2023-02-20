@@ -1,5 +1,5 @@
 {
-  "name": "@longo-d/solitare",
+  "name": "solitare",
   "version": "1.0.0",
   "description": "CST8334 Software Development Project",
   "main": "main.js",
