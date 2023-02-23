@@ -325,20 +325,73 @@ function refillStockpile() {
         stock[stock.length] = waste.pop();
     }
     // remove the front image on the top waste pile card
-    document.getElementById("waste").src = "";
+    document.getElementById("waste").src = "images/blank_card.png";
 }
 
 // TESTING
 
-// can't click on elements that are underneath another element
-// this could be because of the table's, td's, and img's blocking the elements underneath?
+// very helpful youtube video to understand drag and drop feature
+// https://www.youtube.com/watch?v=C22hQKE_32c
+// click and drag testing
 
-// doesn't work
-document.getElementById("tableau-1-1").addEventListener("click", function(){ alert("clicked on tableau-1-1"); });
-// doesn't work
-document.getElementById("tableau-1-12").addEventListener("click", function(){ alert("clicked on tableau-1-12"); });
-// works
-document.getElementById("tableau-1-13").addEventListener("click", function(){ alert("clicked on tableau-1-13"); });
+// waste pile element
+const wasteQuery = document.querySelector('.waste');
+// foundation pile elements
+const foundations = document.querySelectorAll('.foundation');
+
+// wasteQuery listeners
+wasteQuery.addEventListener('dragstart', dragStart);
+wasteQuery.addEventListener('dragend', dragEnd);
+
+// loop through foundations and call drag events
+for(const foundation of foundations) {
+    foundation.addEventListener('dragover', dragOver);
+    foundation.addEventListener('drop', dragDrop);
+}
+
+// drag functions
+
+// triggers when the drag is started
+function dragStart(event) {
+    console.log('start');
+    this.className += ' hold';
+    setTimeout(() => this.className = 'invisible', 0);
+}
+
+// triggers when the drag is released
+function dragEnd() {
+    console.log('end');    
+    this.className = 'waste'
+}
+
+// triggers when a drag and hold is over a pile
+function dragOver(e) {
+    e.preventDefault();
+    console.log('over');
+}
+
+// triggers when a drag and hold is dropped on a pile
+function dragDrop(event) {
+    console.log('drop');
+    // card moving from waste
+    let moveCard = waste[waste.length-1];
+    
+    // identify pile where dropped
+    let dropped;
+    // when dropped onto td tag
+    try {
+        dropped = event.target.childNodes[1].id;
+    }
+    // when dropped onto img tag
+    catch (e) { 
+        dropped = event.target.id;    
+    }
+
+    console.log(dropped);
+    console.log(moveCard);
+}
+
+
 
 // Index/Hidden test -------------
 
