@@ -338,6 +338,8 @@ function refillStockpile() {
 const wasteQuery = document.querySelector('.waste');
 // foundation pile elements
 const foundations = document.querySelectorAll('.foundation');
+// tableau pile elements
+const tableaus = document.querySelectorAll('.tableau');
 
 // wasteQuery listeners
 wasteQuery.addEventListener('dragstart', dragStart);
@@ -347,6 +349,12 @@ wasteQuery.addEventListener('dragend', dragEnd);
 for(const foundation of foundations) {
     foundation.addEventListener('dragover', dragOver);
     foundation.addEventListener('drop', dragDrop);
+}
+
+// loop through tableau and call drag events
+for(const tableau of tableaus) {
+    tableau.addEventListener('dragover', dragOver);
+    tableau.addEventListener('drop', dragDrop);
 }
 
 // drag functions
@@ -360,7 +368,8 @@ function dragStart(event) {
 
 // triggers when the drag is released
 function dragEnd() {
-    console.log('end');    
+    console.log('end');
+    // return card back to pile if not dropped on a valid pile
     this.className = 'waste'
 }
 
@@ -377,15 +386,17 @@ function dragDrop(event) {
     let moveCard = waste[waste.length-1];
     
     // identify pile where dropped
-    let dropped;
+    let dropped = event.target;
+    
+    
     // when dropped onto td tag
-    try {
-        dropped = event.target.childNodes[1].id;
-    }
+//    try {
+//        dropped = event.target.childNodes[1].id;    
+//    }
     // when dropped onto img tag
-    catch (e) { 
-        dropped = event.target.id;    
-    }
+//    catch (e) { 
+//        dropped = event.target.id;
+//    }
 
     console.log(dropped);
     console.log(moveCard);
@@ -402,12 +413,41 @@ function dragDrop(event) {
 //    t1.hidden = "true";
 //}
 
-var list = document.getElementById("container").getElementsByTagName("td");
-for (i = 0; i < list.length; i++) {
-    let image = list[i].firstElementChild;
-    if (image.style.display == "none") {
-        list[i].style.zIndex = "-1";
-    }
+// tableau piles
+for (let j=0; j < 7; j++) {
+    
+    // tableau cards in pile
+    for (let i=0; i < 13; i++) {
+        
+        let spot = tableau[j][i];
+        
+        // if tableau card in pile is undefined/blank
+        if (spot == undefined){
+            let tableauId = document.getElementById("tableau-"+(j+1)+"-"+(i+1));
+            tableauId.style.display = "none";
+            
+            // zindex doesn't seem to layer the element to the background
+            tableauId.style.zIndex = -i;
+            console.log(tableauId);    
+        }
+        // if tableau card is being used
+        else {
+            let tableauId = document.getElementById("tableau-"+(j+1)+"-"+(i+1));
+            tableauId.style.zIndex = i;
+            console.log(tableauId);
+        }
+    
+    }  
 }
+  
+
+
+//var list = document.getElementById("container").getElementsByTagName("td");
+//for (i = 0; i < list.length; i++) {
+//    let image = list[i].firstElementChild;
+//    if (image.style.display == "none") {
+//        list[i].style.zIndex = "-1";
+//    }
+//}
 
 // Another option to try: surround <img> with <object type="image/jpeg"></object> (gets rid of broken img icon and alt text, but won't load card from js). Will also require setting index to -1
