@@ -252,9 +252,15 @@ function removeFrontImage(moveFrom) {
     document.getElementById("tableau-"+(moveFrom+1)+"-"+(tableau[moveFrom].length+1)).src = "";
 }
 
-function showMovedFrontImage(moveTo) {
 // displays the moveFrom card in the moveTo tableau pile
-    document.getElementById("tableau-"+(moveTo+1)+"-"+tableau[moveTo].length).src = tableau[moveTo][tableau[moveTo].length-1].frontImage;    
+function showMovedFrontImage(moveTo) {
+    // identifies the tableau card
+    let tableauCard = document.getElementById("tableau-"+(moveTo+1)+"-"+tableau[moveTo].length);
+    // changes the img src to the front image
+    tableauCard.src = tableau[moveTo][tableau[moveTo].length-1].frontImage;
+    // removes the display none on the img element
+    tableauCard.style.display = "";
+    
 }
 
 // spare tableau spots can only be filled with kings
@@ -375,6 +381,8 @@ const foundations = document.querySelectorAll('.foundation');
 // tableau pile elements
 const tableaus = document.querySelectorAll('.tableau');
 
+let whatClass;
+
 // wasteQuery listeners
 wasteQuery.addEventListener('dragstart', dragStart);
 wasteQuery.addEventListener('dragend', dragEnd);
@@ -387,6 +395,8 @@ for(const foundation of foundations) {
 
 // loop through tableau and call drag events
 for(const tableau of tableaus) {
+    tableau.addEventListener('dragstart', dragStart);
+    tableau.addEventListener('dragend', dragEnd);
     tableau.addEventListener('dragover', dragOver);
     tableau.addEventListener('drop', dragDrop);
 }
@@ -397,14 +407,23 @@ for(const tableau of tableaus) {
 function dragStart(event) {
     console.log('start');
     this.className += ' hold';
-    setTimeout(() => this.className = 'invisible', 0);
+    
+    whatClass = this.className.split(" ");
+        
+//    setTimeout(() => (this.className = 'invisible'), 0);
 }
 
 // triggers when the drag is released
 function dragEnd() {
     console.log('end');
     // return card back to pile if not dropped on a valid pile
-    this.className = 'waste'
+    if (whatClass[0] == "waste") {
+        this.className = "waste";
+    }
+    else if (whatClass[0] == "tableau") {
+        console.log("here");
+        this.className = whatClass[0]+" "+whatClass[1]+" "+whatClass[2];
+    }
 }
 
 // triggers when a drag and hold is over a pile
@@ -416,8 +435,27 @@ function dragOver(e) {
 // triggers when a drag and hold is dropped on a pile
 function dragDrop(event) {
     console.log('drop');
-    // card moving from waste
-    let moveCard = waste[waste.length-1];
+    
+    let moveCard;
+
+    // card moving from waste pile
+    if (whatClass[0] == "waste") {
+       
+        moveCard = waste[waste.length-1];
+    } 
+    
+    // card moving from tableau pile
+    else if (whatClass[0] == "tableau") {
+        let getTableauPile = (whatClass[1].slice(11))-1;
+        moveCard = tableau[getTableauPile][tableau[getTableauPile].length-1];
+    }
+    
+    else {
+        console.log("something else");
+    }
+    
+    
+    // this section should be a function on its own and called ************
     
     // identify pile where dropped
     let dropped = event.target;
@@ -428,16 +466,26 @@ function dragDrop(event) {
         let tableauArrayPile = droppedTargetSplit[1]-1;
         let tableauArrayCard = droppedTargetSplit[2]-1;
         let tPile = tableau[tableauArrayPile][tableauArrayCard];
+                
+        // move waste card to tableau pile
+        // try to make this more dynamic **********
+        // or can pass the waste.pop as an argument *********
+        tableau[tableauArrayPile][tableau[tableauArrayPile].length] = waste.pop();
         
+        // call function to display the new front image 
+        showMovedFrontImage(tableauArrayPile);
         
-        console.log(tPile);
+        // identify the tableau row
+        let tableauRow = document.getElementById("tableau"+(tableauArrayPile+1)+"-row"+(tableau[tableauArrayPile].length));
+        
+        // change the zIndex on the tableauRow to layer it on top
+        tableauRow.style.zIndex = (tableauArrayCard+1)*10;
     } 
     
     // card dropped on a foundation pile
     else if (droppedTargetSplit[0] == "foundation") {
         let foundationArrayPile = droppedTargetSplit[1]-1;
         let fPile = foundation[foundationArrayPile];
-        
         
         console.log(fPile);
     }
@@ -447,16 +495,7 @@ function dragDrop(event) {
         console.log("Not dropped on a valid target/pile");
     }
     
-    
-    
-    // when dropped onto td tag
-//    try {
-//        dropped = event.target.childNodes[1].id;    
-//    }
-    // when dropped onto img tag
-//    catch (e) { 
-//        dropped = event.target.id;
-//    }
+    // end new function here *********
 
     console.log(dropped);
     console.log(moveCard);
