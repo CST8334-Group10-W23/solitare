@@ -419,24 +419,30 @@ for (let j=0; j < 7; j++) {
     // tableau cards in pile
     for (let i=0; i < 13; i++) {
         
-        let spot = tableau[j][i];
+        // individual tableau card spots
+        let tableauCard = tableau[j][i];
+        // tableau columns and rows
+        let tableauRow = document.getElementById("tableau"+(j+1)+"-row"+(i+1));
+        // individual tableau img id
+        let tableauImgId = document.getElementById("tableau-"+(j+1)+"-"+(i+1));
         
         // if tableau card in pile is undefined/blank
-        if (spot == undefined){
-            let tableauId = document.getElementById("tableau-"+(j+1)+"-"+(i+1));
-            tableauId.style.display = "none";
+        if (tableauCard == undefined){
+            // display to not display the undefined img elements
+            tableauImgId.style.display = "none";
             
-            // zindex doesn't seem to layer the element to the background
-            tableauId.style.zIndex = -i;
-            console.log(tableauId);    
+            // zindex to keep the layer to 0
+            tableauRow.style.zIndex = 0;
         }
-        // if tableau card is being used
+        // if tableau card is present 
         else {
-            let tableauId = document.getElementById("tableau-"+(j+1)+"-"+(i+1));
-            tableauId.style.zIndex = i;
-            console.log(tableauId);
+            // zindex goes up in 10s
+            if (i == 0) tableauRow.style.zIndex = i+10;
+            else tableauRow.style.zIndex = (i+1)*10;
         }
     
+        // console log to verify changes
+        console.log(tableauRow);
     }  
 }
   
