@@ -86,10 +86,11 @@ console.log(tableau);
 // setup tableau
 function setupTableau() {
     for (let i=0;i < 7;i++) {
-    x = i+1;
-    dealCards(i);
-    displayBottomCards(i,x);
-    displayTopCard(i,x);
+        x = i+1;
+        dealCards(i);
+        displayBottomCards(i,x);
+        displayTopCard(i,x);
+        layerSetup();
     }
 }
 
@@ -295,8 +296,6 @@ function canFillFoundation(foundationPile, moveFrom) {
   }  
 } 
 
-
-
 // click listener for stock pile
 document.getElementById("stock").addEventListener("click", function() { clickStockpile() });
 
@@ -327,6 +326,41 @@ function refillStockpile() {
     // remove the front image on the top waste pile card
     document.getElementById("waste").src = "images/blank_card.png";
 }
+
+// hide empty img elements and layer cards for tableau setup 
+function layerSetup() {
+    
+    // tableau piles
+    for (let j=0; j < 7; j++) {
+
+        // tableau cards in pile
+        for (let i=0; i < 13; i++) {
+
+            // individual tableau card spots
+            let tableauCard = tableau[j][i];
+            // tableau columns and rows
+            let tableauRow = document.getElementById("tableau"+(j+1)+"-row"+(i+1));
+            // individual tableau img id
+            let tableauImgId = document.getElementById("tableau-"+(j+1)+"-"+(i+1));
+
+            // if tableau card in pile is undefined/blank
+            if (tableauCard == undefined){
+                // display to not display the undefined img elements
+                tableauImgId.style.display = "none";
+
+                // zindex to keep the layer to 0
+                tableauRow.style.zIndex = 0;
+            }
+            // if tableau card is present 
+            else {
+                // zindex goes up in 10s
+                if (i == 0) tableauRow.style.zIndex = i+10;
+                else tableauRow.style.zIndex = (i+1)*10;
+            }
+        }  
+    }
+}
+
 
 // TESTING
 
@@ -387,6 +421,32 @@ function dragDrop(event) {
     
     // identify pile where dropped
     let dropped = event.target;
+    let droppedTargetSplit = dropped.id.split('-');
+    
+    // card dropped on a tableau pile
+    if (droppedTargetSplit[0] == "tableau") {
+        let tableauArrayPile = droppedTargetSplit[1]-1;
+        let tableauArrayCard = droppedTargetSplit[2]-1;
+        let tPile = tableau[tableauArrayPile][tableauArrayCard];
+        
+        
+        console.log(tPile);
+    } 
+    
+    // card dropped on a foundation pile
+    else if (droppedTargetSplit[0] == "foundation") {
+        let foundationArrayPile = droppedTargetSplit[1]-1;
+        let fPile = foundation[foundationArrayPile];
+        
+        
+        console.log(fPile);
+    }
+    
+    // card dropped on an invalid area
+    else {
+        console.log("Not dropped on a valid target/pile");
+    }
+    
     
     
     // when dropped onto td tag
@@ -413,38 +473,8 @@ function dragDrop(event) {
 //    t1.hidden = "true";
 //}
 
-// tableau piles
-for (let j=0; j < 7; j++) {
-    
-    // tableau cards in pile
-    for (let i=0; i < 13; i++) {
-        
-        // individual tableau card spots
-        let tableauCard = tableau[j][i];
-        // tableau columns and rows
-        let tableauRow = document.getElementById("tableau"+(j+1)+"-row"+(i+1));
-        // individual tableau img id
-        let tableauImgId = document.getElementById("tableau-"+(j+1)+"-"+(i+1));
-        
-        // if tableau card in pile is undefined/blank
-        if (tableauCard == undefined){
-            // display to not display the undefined img elements
-            tableauImgId.style.display = "none";
-            
-            // zindex to keep the layer to 0
-            tableauRow.style.zIndex = 0;
-        }
-        // if tableau card is present 
-        else {
-            // zindex goes up in 10s
-            if (i == 0) tableauRow.style.zIndex = i+10;
-            else tableauRow.style.zIndex = (i+1)*10;
-        }
-    
-        // console log to verify changes
-        console.log(tableauRow);
-    }  
-}
+
+
   
 
 
