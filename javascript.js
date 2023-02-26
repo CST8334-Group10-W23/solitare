@@ -188,25 +188,22 @@ function stockPile() {
     return stock;
 }
 
-function alternateColor(moveFrom, moveTo) {
-    
-}
-
 // move most front card of tableau pile to another pile
 function moveTableauCard(moveFrom, moveTo) {
     
     let moveToColor, moveFromColor;
         
-    // try to retrieve color from top card of moveFrom tableau pile
+    // try to retrieve color from top card of moveFrom pile
     try {
-        moveFromColor = tableau[moveFrom][tableau[moveFrom].length-1].color;
+//        moveFromColor = tableau[moveFrom][tableau[moveFrom].length-1].color;
+        moveFromColor = moveFrom[moveFrom.length-1].color;
     }
-    // catch if there is no card (empty tableau pile)
+    // catch if there is no card (empty pile)
     catch (err) {
         moveFromColor = null;
     }
     
-    // try to retrieve color from top card of moveTo tableau pile
+    // try to retrieve color from top card of moveTo pile
     try{
         moveToColor = tableau[moveTo][tableau[moveTo].length-1].color;
     }
@@ -214,11 +211,9 @@ function moveTableauCard(moveFrom, moveTo) {
     catch (err) {
         moveToColor = null;
     }
-    
-    
-    
+        
     // avoid dropping on the same tableau pile
-    if (tableau[moveTo] === tableau[moveFrom]) {
+    if (tableau[moveTo] === moveFrom) {
         alert("Cannot drop a card on same pile");
     }
     
@@ -234,16 +229,16 @@ function moveTableauCard(moveFrom, moveTo) {
     
     // checks if the tableau card exists
     // avoids undefined objects being moved to tableau piles
-    else  if (tableau[moveFrom]. length === 0) {
+    else if (moveFrom.length === 0) {
         alert("Cannot move a card from a pile that has no card to move");
     }
     
     // card colors are not the same, proceed
     else {
 
-            // move card from one tableau array to another 
-            tableau[moveTo][tableau[moveTo].length] = tableau[moveFrom].pop();
-            updateTableau(moveFrom, moveTo);
+            // move card from one array pile to another
+            tableau[moveTo][tableau[moveTo].length] = moveFrom.pop();
+            updateDisplay(moveFrom, moveTo);
             
             // identify the tableau row
             let tableauRow = document.getElementById("tableau"+(moveTo+1)+"-row"+(tableau[moveTo].length));
@@ -255,47 +250,62 @@ function moveTableauCard(moveFrom, moveTo) {
 }
 
 // updates tableau display after a moveTableauCard has occurred
-function updateTableau(moveFrom, moveTo) {
+function updateDisplay(moveFrom, moveTo) {
     showNextFrontImage(moveFrom);
     removeFrontImage(moveFrom);
     showMovedFrontImage(moveTo);  
 }
 
 function showNextFrontImage(moveFrom) {
+
+    if (whatClass[0] === "tableau") { 
 // displays next front image of the moveFrom tableau pile
-    try {
-        document.getElementById("tableau-"+(moveFrom+1)+"-"+tableau[moveFrom].length).src = tableau[moveFrom][tableau[moveFrom].length-1].frontImage;
-        
+        try {
+            document.getElementById("tableau-"+tableauColFrom+"-"+moveFrom.length).src = moveFrom[moveFrom.length-1].frontImage;
+
+        }
+        // catch if there is no card (empty pile)
+        catch (e){
+            document.getElementById("tableau-"+tableauColFrom+"-1").src = "images/blank_card.png";
+        }
     }
-    // catch if there is no card (empty pile)
-    catch (err){
-        document.getElementById("tableau-"+(moveFrom+1)+"-1").src = "";
+    else {
+        let imgId = document.getElementById("waste");
+        try {
+            imgId.src = waste[waste.length-1].frontImage;
+        }
+        // catch if there is no card (empty pile)
+        catch (e) {
+            imgId.src = "images/blank_card.png";
+        }
     }
 }
 
 function removeFrontImage(moveFrom) {
-    // identify img element id
-    let imgId = document.getElementById("tableau-"+(moveFrom+1)+"-"+(tableau[moveFrom].length+1));
     
-    // if the pile will be empty after the move
-    if (tableau[moveFrom].length == 0){
-        // keeps an img element available
-        // this is to make sure a card can still be placed on the empty pile afterwards
-        imgId.src = "images/blank_card.png";
-    }
-    
-    // another card is available
-    else {
-        // removes front image of the moveFrom tableau pile   
-        imgId.src = "";
-        imgId.style.display = "none";
+    if (whatClass[0] === "tableau") {
+        // identify img element id
+        let imgId = document.getElementById("tableau-"+tableauColFrom+"-"+(moveFrom.length+1));
 
-        // layers row to the background
-        let row = document.getElementById("tableau"+(moveFrom+1)+"-row"+(tableau[moveFrom].length+1));
-        row.style.zIndex = 0;
+        // if the pile will be empty after the move
+        if (moveFrom.length == 0){
+            // keeps an img element available
+            // this is to make sure a card can still be placed on the empty pile afterwards
+            imgId.src = "images/blank_card.png";
+        }
+
+        // another card is available
+        else {
+            // removes front image of the moveFrom tableau pile   
+            imgId.src = "";
+            imgId.style.display = "none";
+
+            // layers row to the background
+            let row = document.getElementById("tableau"+tableauColFrom+"-row"+(moveFrom.length+1));
+            row.style.zIndex = 0;
+        }
     }
 
-    
 }
 
 // displays the moveFrom card in the moveTo tableau pile
@@ -306,15 +316,14 @@ function showMovedFrontImage(moveTo) {
     tableauCard.src = tableau[moveTo][tableau[moveTo].length-1].frontImage;
     // removes the display none on the img element
     tableauCard.style.display = "";
-    
 }
 
 // spare tableau spots can only be filled with kings
 function fillTableauSpot(moveFrom, moveTo) { 
-    if (tableau[moveFrom][tableau[moveFrom].length-1].value === "king") {
+    if (moveFrom[moveFrom.length-1].value === "king") {
         // remove card from moveFrom pile and move to moveTo pile
-        tableau[moveTo][tableau[moveTo].length] = tableau[moveFrom].pop();
-        updateTableau(moveFrom, moveTo);
+        tableau[moveTo][tableau[moveTo].length] = moveFrom.pop();
+        updateDisplay(moveFrom, moveTo);
     } else { 
         alert("Cannot move card! \nOnly kings can fill an empty tableau spot");
     }  
@@ -331,10 +340,10 @@ function canFillFoundation(foundationPile, moveFrom) {
 // checks if the foundation is at 0
   if (foundation[foundationPile].length === 0) {
     // checks if the card value is an ace
-    if (tableau[moveFrom][tableau[moveFrom].length-1].value === "ace") {
+    if (moveFrom[moveFrom.length-1].value === "ace") {
         
         // moves the moveFrom tableau card to the foundationPile
-        foundation[foundationPile][foundation[foundationPile].length] = tableau[moveFrom].pop();
+        foundation[foundationPile][foundation[foundationPile].length] = moveFrom.pop();
         // removes the tableau front card image in the moveFrom pile
         removeFrontImage(moveFrom);
         // displays the next tableau front card image in the moveFrom pile
@@ -400,7 +409,7 @@ function layerSetup() {
                 // display to not display the undefined img elements
                 tableauImgId.style.display = "none";
 
-                // zindex to keep the layer to 0
+                // zIndex to keep the layer to 0 for empty cards
                 tableauRow.style.zIndex = 0;
             }
             // if tableau card is present 
@@ -428,6 +437,7 @@ const foundations = document.querySelectorAll('.foundation');
 const tableaus = document.querySelectorAll('.tableau');
 
 let whatClass;
+let tableauColFrom;
 
 // wasteQuery listeners
 wasteQuery.addEventListener('dragstart', dragStart);
@@ -455,6 +465,11 @@ function dragStart(event) {
     this.className += ' hold';
     // to further identify the class name of what element is being dragged
     whatClass = this.className.split(" ");
+    if (whatClass[0] === "tableau") {
+        tableauColFrom = whatClass[1].slice(11);
+        console.log(tableauColFrom);
+    }
+    
 }
 
 // triggers when the drag is released
@@ -482,33 +497,32 @@ function dragOver(e) {
 function dragDrop(event) {
     console.log('drop');
     
-    let whatArray;
+    // pile that the card will be moving from
     let moveFrom;
 
+    // identify pile where dropped
+    let dropped = event.target;
+    // split the dropped element id to identify and use elements
+    let droppedTargetSplit = dropped.id.split('-');
+    
     // card moving from waste pile
     if (whatClass[0] == "waste") {
+        moveFrom = waste;
         moveCard = waste[waste.length-1];
-        whatArray = waste;
     } 
     
     // card moving from tableau pile
     else if (whatClass[0] == "tableau") {
         // identify the card that the tableau pile is being moved from
-        moveFrom = (whatClass[1].slice(11))-1;
+        moveFrom = tableau[(whatClass[1].slice(11))-1];
+        
         // moveCard not being used yet
-        moveCard = tableau[moveFrom][tableau[moveFrom].length-1];
-        // identify that tableau
-        whatArray = tableau[moveFrom];
+        moveCard = moveFrom[moveFrom.length-1];         
     }
     
     else {
         console.log("something else");
     }
-        
-    // identify pile where dropped
-    let dropped = event.target;
-    // break up the dropped element id to identify and use elements
-    let droppedTargetSplit = dropped.id.split('-');
         
     // card dropped on a tableau pile
     if (droppedTargetSplit[0] == "tableau") {
@@ -520,7 +534,6 @@ function dragDrop(event) {
         
         // call function to move cards
         moveTableauCard(moveFrom, moveTo);
-                
     } 
     
     // card dropped on a foundation pile
