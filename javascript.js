@@ -249,14 +249,27 @@ function showNextFrontImage(moveFrom) {
 }
 
 function removeFrontImage(moveFrom) {
-// removes front image of the moveFrom tableau pile
+    // identify img element id
     let imgId = document.getElementById("tableau-"+(moveFrom+1)+"-"+(tableau[moveFrom].length+1));
     
-    imgId.src = "";
-    imgId.style.display = "none";
+    // if the pile will be empty after the move
+    if (tableau[moveFrom].length == 0){
+        // keeps an img element available
+        // this is to make sure a card can still be placed on the empty pile afterwards
+        imgId.src = "images/blank_card.png";
+    }
     
-    let row = document.getElementById("tableau"+(moveFrom+1)+"-row"+(tableau[moveFrom].length+1));
-    row.style.zIndex = 0;
+    // another card is available
+    else {
+        // removes front image of the moveFrom tableau pile   
+        imgId.src = "";
+        imgId.style.display = "none";
+
+        // layers row to the background
+        let row = document.getElementById("tableau"+(moveFrom+1)+"-row"+(tableau[moveFrom].length+1));
+        row.style.zIndex = 0;
+    }
+
     
 }
 
@@ -512,6 +525,11 @@ function dragDrop(event) {
     console.log(moveCard);
 }
 
+function dragDropTableauCards() {
+    
+    
+    
+}
 
 
 // Index/Hidden test -------------
