@@ -188,6 +188,10 @@ function stockPile() {
     return stock;
 }
 
+function alternateColor(moveFrom, moveTo) {
+    
+}
+
 // move most front card of tableau pile to another pile
 function moveTableauCard(moveFrom, moveTo) {
     
@@ -211,21 +215,42 @@ function moveTableauCard(moveFrom, moveTo) {
         moveToColor = null;
     }
     
+    
+    
+    // avoid dropping on the same tableau pile
+    if (tableau[moveTo] === tableau[moveFrom]) {
+        alert("Cannot drop a card on same pile");
+    }
+    
     // card colors are the same, display alert
-    if (moveToColor == moveFromColor) {
+    else if (moveToColor == moveFromColor) {
         alert("Cannot move card! \nStacking cards on a tableau pile must be of alternating colors");
     }
+    
+    // spare tableau spots can only be filled with kings
+    else if (tableau[moveTo].length === 0) {
+        fillTableauSpot(moveFrom, moveTo);
+    }
+    
+    // checks if the tableau card exists
+    // avoids undefined objects being moved to tableau piles
+    else  if (tableau[moveFrom]. length === 0) {
+        alert("Cannot move a card from a pile that has no card to move");
+    }
+    
     // card colors are not the same, proceed
     else {
-        if (tableau[moveTo].length === 0) {
-            // spare tableau spots can only be filled with kings
-            fillTableauSpot(moveFrom, moveTo);
-        }
-        else {
+
             // move card from one tableau array to another 
             tableau[moveTo][tableau[moveTo].length] = tableau[moveFrom].pop();
             updateTableau(moveFrom, moveTo);
-        }
+            
+            // identify the tableau row
+            let tableauRow = document.getElementById("tableau"+(moveTo+1)+"-row"+(tableau[moveTo].length));
+
+            // change the zIndex on the tableauRow to layer it on top
+            tableauRow.style.zIndex = (tableau[moveTo].length)*10;  
+
     }
 }
 
@@ -428,26 +453,26 @@ for(const tableau of tableaus) {
 function dragStart(event) {
     console.log('start');
     this.className += ' hold';
-    
+    // to further identify the class name of what element is being dragged
     whatClass = this.className.split(" ");
-        
-//    setTimeout(() => (this.className = 'invisible'), 0);
 }
 
 // triggers when the drag is released
 function dragEnd() {
     console.log('end');
-    // return card back to pile if not dropped on a valid pile
+    // return card back to waste pile if not dropped on a valid pile
     if (whatClass[0] == "waste") {
         this.className = "waste";
     }
+    // return card back to tableau pile if not dropped on a valid pile
     else if (whatClass[0] == "tableau") {
-        console.log("here");
         this.className = whatClass[0]+" "+whatClass[1]+" "+whatClass[2];
     }
 }
 
-// triggers when a drag and hold is over a pile
+// triggers when a drag and hold is over a pile.
+// only purpose of this function is to identify
+// when the drag is over a pile that is listening
 function dragOver(e) {
     e.preventDefault();
     console.log('over');
@@ -457,52 +482,44 @@ function dragOver(e) {
 function dragDrop(event) {
     console.log('drop');
     
-    let moveCard;
-    let pile;
-    let getTableauPile;
+    let whatArray;
+    let moveFrom;
 
     // card moving from waste pile
     if (whatClass[0] == "waste") {
-       
         moveCard = waste[waste.length-1];
-        pile = waste;
+        whatArray = waste;
     } 
     
     // card moving from tableau pile
     else if (whatClass[0] == "tableau") {
-        getTableauPile = (whatClass[1].slice(11))-1;
-        moveCard = tableau[getTableauPile][tableau[getTableauPile].length-1];
-        pile = tableau[getTableauPile];
+        // identify the card that the tableau pile is being moved from
+        moveFrom = (whatClass[1].slice(11))-1;
+        // moveCard not being used yet
+        moveCard = tableau[moveFrom][tableau[moveFrom].length-1];
+        // identify that tableau
+        whatArray = tableau[moveFrom];
     }
     
     else {
         console.log("something else");
     }
-    
-    
-    // this section should be a function on its own and called ************
-    
+        
     // identify pile where dropped
     let dropped = event.target;
+    // break up the dropped element id to identify and use elements
     let droppedTargetSplit = dropped.id.split('-');
-    
+        
     // card dropped on a tableau pile
     if (droppedTargetSplit[0] == "tableau") {
-        let tableauArrayPile = droppedTargetSplit[1]-1;
+        // identify the target tableau array pile
+        let moveTo = droppedTargetSplit[1]-1;
+        // identify the target tableau array card
+        // not being used yet
         let tableauArrayCard = droppedTargetSplit[2]-1;
-        let tPile = tableau[tableauArrayPile][tableauArrayCard];
-                
-        // move card to tableau pile
-        tableau[tableauArrayPile][tableau[tableauArrayPile].length] = pile.pop();
-                
-        // identify the tableau row
-        let tableauRow = document.getElementById("tableau"+(tableauArrayPile+1)+"-row"+(tableau[tableauArrayPile].length));
         
-        // change the zIndex on the tableauRow to layer it on top
-        tableauRow.style.zIndex = (tableauArrayCard+2)*10;  
-        
-        // update the tableau display
-        updateTableau(getTableauPile,tableauArrayPile);
+        // call function to move cards
+        moveTableauCard(moveFrom, moveTo);
                 
     } 
     
@@ -518,17 +535,6 @@ function dragDrop(event) {
     else {
         console.log("Not dropped on a valid target/pile");
     }
-    
-    // end new function here *********
-
-    console.log(dropped);
-    console.log(moveCard);
-}
-
-function dragDropTableauCards() {
-    
-    
-    
 }
 
 
