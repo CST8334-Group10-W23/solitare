@@ -240,6 +240,7 @@ function showNextFrontImage(moveFrom) {
 // displays next front image of the moveFrom tableau pile
     try {
         document.getElementById("tableau-"+(moveFrom+1)+"-"+tableau[moveFrom].length).src = tableau[moveFrom][tableau[moveFrom].length-1].frontImage;
+        
     }
     // catch if there is no card (empty pile)
     catch (err){
@@ -249,7 +250,14 @@ function showNextFrontImage(moveFrom) {
 
 function removeFrontImage(moveFrom) {
 // removes front image of the moveFrom tableau pile
-    document.getElementById("tableau-"+(moveFrom+1)+"-"+(tableau[moveFrom].length+1)).src = "";
+    let imgId = document.getElementById("tableau-"+(moveFrom+1)+"-"+(tableau[moveFrom].length+1));
+    
+    imgId.src = "";
+    imgId.style.display = "none";
+    
+    let row = document.getElementById("tableau"+(moveFrom+1)+"-row"+(tableau[moveFrom].length+1));
+    row.style.zIndex = 0;
+    
 }
 
 // displays the moveFrom card in the moveTo tableau pile
@@ -437,17 +445,21 @@ function dragDrop(event) {
     console.log('drop');
     
     let moveCard;
+    let pile;
+    let getTableauPile;
 
     // card moving from waste pile
     if (whatClass[0] == "waste") {
        
         moveCard = waste[waste.length-1];
+        pile = waste;
     } 
     
     // card moving from tableau pile
     else if (whatClass[0] == "tableau") {
-        let getTableauPile = (whatClass[1].slice(11))-1;
+        getTableauPile = (whatClass[1].slice(11))-1;
         moveCard = tableau[getTableauPile][tableau[getTableauPile].length-1];
+        pile = tableau[getTableauPile];
     }
     
     else {
@@ -467,19 +479,18 @@ function dragDrop(event) {
         let tableauArrayCard = droppedTargetSplit[2]-1;
         let tPile = tableau[tableauArrayPile][tableauArrayCard];
                 
-        // move waste card to tableau pile
-        // try to make this more dynamic **********
-        // or can pass the waste.pop as an argument *********
-        tableau[tableauArrayPile][tableau[tableauArrayPile].length] = waste.pop();
-        
-        // call function to display the new front image 
-        showMovedFrontImage(tableauArrayPile);
-        
+        // move card to tableau pile
+        tableau[tableauArrayPile][tableau[tableauArrayPile].length] = pile.pop();
+                
         // identify the tableau row
         let tableauRow = document.getElementById("tableau"+(tableauArrayPile+1)+"-row"+(tableau[tableauArrayPile].length));
         
         // change the zIndex on the tableauRow to layer it on top
-        tableauRow.style.zIndex = (tableauArrayCard+1)*10;
+        tableauRow.style.zIndex = (tableauArrayCard+2)*10;  
+        
+        // update the tableau display
+        updateTableau(getTableauPile,tableauArrayPile);
+                
     } 
     
     // card dropped on a foundation pile
