@@ -8,16 +8,7 @@
 const suits = ["hearts", "diamonds", "spades", "clubs"];
 
 // Array of values
-const values = ["ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, "jack", "queen", "king"];
-
-// card object
-//let card = {
-//    suit: null,
-//    value: null,
-//    color: null,
-//    frontImage: null,
-//    backImage: "images/deck_backing.jpg"
-//}
+const values = ["ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"];
 
 // Class deck represents a deck of cards
 class Deck {
@@ -141,7 +132,7 @@ function dealCards(num) {
 // create card objects from the deck
 function setCard(deck) {
     // take the last card from the deck and gather details
-    value = deck.deck[deck.deck.length-1].split("_")[0];
+    value = deck.deck[deck.deck.length-1].split("_")[0];    
     suit = deck.deck[deck.deck.length-1].split("_")[2];
     frontImage = "images/"+deck.deck[deck.deck.length-1]+".png";
 
@@ -190,7 +181,7 @@ function stockPile() {
 
 // move most front card of tableau pile to another pile
 function moveTableauCard(moveFrom, moveTo) {
-    
+        
     let moveToColor, moveFromColor;
         
     // try to retrieve color from top card of moveFrom pile
@@ -233,9 +224,13 @@ function moveTableauCard(moveFrom, moveTo) {
         alert("Cannot move a card from a pile that has no card to move");
     }
     
+    // cards can only be stacked in the proper order 
+    else if (checkOrder(moveFrom,moveTo)) {
+        alert("Cards can only be stacked in descending order.\nKing, Queen, Jack, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, Ace");
+    }
+    
     // card colors are not the same, proceed
     else {
-
             // move card from one array pile to another
             tableau[moveTo][tableau[moveTo].length] = moveFrom.pop();
             updateDisplay(moveFrom, moveTo);
@@ -245,8 +240,29 @@ function moveTableauCard(moveFrom, moveTo) {
 
             // change the zIndex on the tableauRow to layer it on top
             tableauRow.style.zIndex = (tableau[moveTo].length)*10;  
-
     }
+}
+
+// check value order of cards being moved
+function checkOrder(moveFrom, moveTo) {
+    // get values of the cards being moved and stacked on
+    let valueFrom = values.indexOf(moveFrom[moveFrom.length-1].value);
+    let valueTo = values.indexOf(tableau[moveTo][tableau[moveTo].length-1].value);
+    
+    // check which card has the higher value
+    let isBigger = (valueFrom > valueTo) || (valueFrom == valueTo);
+
+    // if the card value is smaller than the card being stacked
+    if (!isBigger) {
+        // checks if the card value is in directly descending order of the card being stacked
+        let inOrder = (valueFrom === (valueTo-1));
+        // return false if the card is not proper stacking order
+        if (inOrder) return false;
+        // return true if the card is in proper stacking order
+        else return true;
+    }
+    // the value of the moving card is bigger than the card being stacked
+    return isBigger;
 }
 
 // updates tableau display after a moveTableauCard has occurred
@@ -467,7 +483,6 @@ function dragStart(event) {
     whatClass = this.className.split(" ");
     if (whatClass[0] === "tableau") {
         tableauColFrom = whatClass[1].slice(11);
-        console.log(tableauColFrom);
     }
     
 }
