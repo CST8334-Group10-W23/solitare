@@ -29,6 +29,15 @@ table {
     display: inline-block;
 }
 
+button {
+    color: black;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 8.1rem;
+    height 13.66rem;
+}
+
 /* Tableau tables 
    ============== */
 

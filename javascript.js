@@ -226,7 +226,7 @@ function moveTableauCard(moveFrom, moveTo) {
     
     // cards can only be stacked in the proper order 
     else if (checkOrder(moveFrom,moveTo)) {
-        alert("Cards can only be stacked in descending order.\nKing, Queen, Jack, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, Ace");
+        alert("Cards can only be stacked in descending order.\nKing, Queen, Jack, 10, 9, 8, 7, 6, 5, 4, 3, 2, Ace");
     }
     
     // card colors are not the same, proceed
@@ -438,9 +438,6 @@ function layerSetup() {
     }
 }
 
-
-// TESTING
-
 // very helpful youtube video to understand drag and drop feature
 // https://www.youtube.com/watch?v=C22hQKE_32c
 // click and drag testing
@@ -566,26 +563,4 @@ function dragDrop(event) {
 }
 
 
-// Index/Hidden test -------------
-
-//document.getElementById("test").hidden = "true";
-
-//var t1 = document.getElementById("test");
-//if (t1.firstElementChild.src = "") {
-//    t1.hidden = "true";
-//}
-
-
-
-  
-
-
-//var list = document.getElementById("container").getElementsByTagName("td");
-//for (i = 0; i < list.length; i++) {
-//    let image = list[i].firstElementChild;
-//    if (image.style.display == "none") {
-//        list[i].style.zIndex = "-1";
-//    }
-//}
-
-// Another option to try: surround <img> with <object type="image/jpeg"></object> (gets rid of broken img icon and alt text, but won't load card from js). Will also require setting index to -1
+// TESTING
