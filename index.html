@@ -8,7 +8,7 @@
 
   <body>
     <div>
-        <table>
+        <table class="top-table">
             
         <!-- stock and waste piles -->
             <tr>
@@ -22,13 +22,27 @@
                 
         <!-- Foundation piles -->
                 <td class="foundation">
-                    <img id="foundation-1" src="" alt="Foundation 1"></td>
+                    <img class="hide-img" id="foundation-1" src="" alt="Foundation 1"></td>
                 <td class="foundation">
-                    <img id="foundation-2" src="" alt="Foundation 2"></td>
+                    <img class="hide-img" id="foundation-2" src="" alt="Foundation 2"></td>
                 <td class="foundation">
-                    <img id="foundation-3" src="" alt="Foundation 3"></td>
+                    <img class="hide-img" id="foundation-3" src="" alt="Foundation 3"></td>
                 <td class="foundation">
-                    <img id="foundation-4" src="" alt="Foundation 4"></td>
+                    <img class="hide-img" id="foundation-4" src="" alt="Foundation 4"></td>
+        
+        <!-- Buttons placed here -->
+                <td class="buttons blank">
+                    <!-- download button -->
+                    <div class="download">
+                        <button onclick="window.open('https://github.com/CST8334-Group10-W23/solitare/releases/latest')">Download for desktop</button>
+                    </div>  
+                    
+                    <!-- new game button --> 
+                    <div>
+                        <button onclick="newGame();" id="new-game-btn">New Game</button>
+                    </div>
+                </td>
+                
             </tr>
             
         </table>
@@ -245,7 +259,7 @@
         </table>
         
         <!-- Tableau Column 4 -->
-        <table class="tableau-col4 no-border">
+        <table class="tableau tableau-col4 no-border">
             <tr id="tableau4-row1" class="tableau-row1">
                 <td>
                     <img id="tableau-4-1" src="">
@@ -314,7 +328,7 @@
         </table>
         
         <!-- Tableau Column 5 -->
-        <table class="tableau-col5 no-border">
+        <table class="tableau tableau-col5 no-border">
             <tr id="tableau5-row1" class="tableau-row1">
                 <td>
                     <img id="tableau-5-1" src="">
@@ -383,7 +397,7 @@
         </table>
         
         <!-- Tableau Column 6 -->
-        <table class="tableau-col6 no-border">
+        <table class="tableau tableau-col6 no-border">
             <tr id="tableau6-row1" class="tableau-row1">
                 <td>
                     <img id="tableau-6-1" src="">
@@ -452,7 +466,7 @@
         </table>
         
         <!-- Tableau Column 7 -->
-        <table class="tableau-col7 no-border">
+        <table class="tableau tableau-col7 no-border">
             <tr id="tableau7-row1" class="tableau-row1">
                 <td>
                     <img id="tableau-7-1" src="">
