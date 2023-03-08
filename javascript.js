@@ -265,17 +265,41 @@ function checkOrder(moveFrom, moveTo) {
     return isBigger;
 }
 
+// for foundation
 // check matching suits prior to move
-function checkSuit(moveFrom, moveTo) {
+function foundationCheckSuit(moveFrom, moveTo) {
     // get suits of the cards being moved and stacked on
-    let suitFrom = tableau[moveFrom][tableau[moveFrom].length-1].suit;
+    let suitFrom = moveFrom[moveFrom.length-1].suit;
     let suitTo = foundation[moveTo][foundation[moveTo].length-1].suit;
     
     // boolean for comparing the suits
     let sameSuit = (suitFrom == suitTo);
-
+    
     // returns boolean
     return sameSuit;
+}
+
+// for foundation
+// check value order of cards being moved
+function foundationCheckOrder(moveFrom, moveTo) {
+    // get values of the cards being moved and stacked on
+    let valueFrom = values.indexOf(moveFrom[moveFrom.length-1].value);
+    let valueTo = values.indexOf(foundation[moveTo][foundation[moveTo].length-1].value);
+    
+    // check which card has the higher value
+    let isBigger = (valueFrom > valueTo);
+
+    // if the card value is smaller than the card being stacked
+    if (isBigger) {
+        // checks if the card value being moved on to the foundation is the card directly above it
+        let inOrder = (valueTo === (valueFrom-1));
+        // return false if the card is in proper stacking order
+        if (inOrder) return false;
+        // return true if the card is not in proper stacking order
+        else return true;
+    }
+    // the value of the moving card is bigger than the card being stacked
+    return !isBigger;
 }
 
 // updates tableau display after a moveTableauCard has occurred
@@ -370,21 +394,26 @@ function canFillFoundation(foundationPile, moveFrom) {
   if (foundation[foundationPile].length === 0) {
     // checks if the card value is an ace
     if (moveFrom[moveFrom.length-1].value === "ace") {
-        
-        // moves the moveFrom tableau card to the foundationPile
-        foundation[foundationPile][foundation[foundationPile].length] = moveFrom.pop();
-        // removes the tableau front card image in the moveFrom pile
-        removeFrontImage(moveFrom);
-        // displays the next tableau front card image in the moveFrom pile
-        showNextFrontImage(moveFrom);
-        // displays foundation front card image        
-        displayFoundationImage(foundationPile);
+        // move card to foundation
+        moveFoundationCard(foundationPile, moveFrom);
     } 
     else { 
       alert("Cannot move card! \nOnly aces can be the base of a foundation");
     }
   }  
 } 
+
+// move card to foundation
+function moveFoundationCard(foundationPile, moveFrom) {
+    // moves the moveFrom card to the foundationPile
+    foundation[foundationPile][foundation[foundationPile].length] = moveFrom.pop();
+    // removes the front card image in the moveFrom pile
+    removeFrontImage(moveFrom);
+    // displays the next front card image in the moveFrom pile
+    showNextFrontImage(moveFrom);
+    // displays foundation front card image        
+    displayFoundationImage(foundationPile);
+}
 
 // click listener for stock pile
 document.getElementById("stock").addEventListener("click", function() { clickStockpile() });
@@ -471,7 +500,6 @@ wasteQuery.addEventListener('dragend', dragEnd);
 
 // loop through foundations and call drag events
 for(const foundation of foundations) {
-    foundation.addEventListener('dragover', dragOver);
     foundation.addEventListener('drop', dragDrop);
     foundation.addEventListener('dragover', dragOver);
     foundation.addEventListener('drop', dragDrop);
@@ -568,12 +596,26 @@ function dragDrop(event) {
         let foundationArrayPile = droppedTargetSplit[1]-1;
         let fPile = foundation[foundationArrayPile];
 
+        
         // if foundation pile is empty
         if (foundation[foundationArrayPile].length === 0) {
             canFillFoundation(foundationArrayPile, moveFrom);
         }
         // if foundation pile is not empty
         else {
+            // verifies that the suit is the same
+            if (!foundationCheckSuit(moveFrom, foundationArrayPile)) {
+                alert("Cannot move card! \nAdding on a foundation must be the same suit")
+            }
+            // verifies that the order is stacking in direct ascending order
+            else if (foundationCheckOrder(moveFrom, foundationArrayPile)) {
+                alert("Cannot move card! \nAdding on a foundation must follow ascending value \nAce, 2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King")
+            }
+            // moves card if both conditions are met
+            else {
+                // moves card and updates display
+                moveFoundationCard(foundationArrayPile, moveFrom);
+            }
             
         }
         
@@ -585,7 +627,6 @@ function dragDrop(event) {
         console.log("Not dropped on a valid target/pile");
     }
 }
-
 
 // TESTING
 
