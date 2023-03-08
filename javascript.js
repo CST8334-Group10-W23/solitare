@@ -4,7 +4,7 @@
 /* eslint-env es6 */
 /* eslint-disable */
 
-function newGame() {
+
 // Array of suits
 const suits = ["hearts", "diamonds", "spades", "clubs"];
 
@@ -71,7 +71,7 @@ const stock = stockPile();
 
 // tableau piles
 const tableau = [[],[],[],[],[],[],[]];
-let x = 0;
+let tableauPileId = 0;
 
 // foundation piles
 const foundation = [[],[],[],[]];
@@ -84,50 +84,50 @@ console.log(tableau);
     
 // setup tableau
 function setupTableau() {
-    for (let i=0;i < 7;i++) {
-        x = i+1;
-        dealCards(i);
-        displayBottomCards(i,x);
-        displayTopCard(i,x);
+    for (let tableauArrayPile=0;tableauArrayPile < 7;tableauArrayPile++) {
+        tableauPileId = tableauArrayPile+1;
+        dealCards(tableauArrayPile);
+        displayBottomCards(tableauArrayPile,tableauPileId);
+        displayTopCard(tableauArrayPile,tableauPileId);
         layerSetup();
     }
 }
 
 // displays back image of bottom cards from the tableau piles
-function displayBottomCards(i,x) {
+function displayBottomCards(tableauArrayPile,tableauPileId) {
     // any tableau piles with more than one card
-    if (tableau[i].length > 1) {
+    if (tableau[tableauArrayPile].length > 1) {
         // first loop
         // "a" identifies the card position in the array
-        for (let a=0; a < tableau[i].length-1; a++){
+        for (let a=0; a < tableau[tableauArrayPile].length-1; a++){
             // second loop
             // "b" identifies the tableau card id
-            for (let b=1; b < tableau[i].length; b++) {
-                document.getElementById("tableau-"+x+"-"+b).src = tableau[i][a].backImage;
-                document.getElementById("tableau-"+x+"-"+b).style.display = "";
+            for (let b=1; b < tableau[tableauArrayPile].length; b++) {
+                document.getElementById("tableau-"+tableauPileId+"-"+b).src = tableau[tableauArrayPile][a].backImage;
+                document.getElementById("tableau-"+tableauPileId+"-"+b).style.display = "";
             }
         }
     }
 }
 
 // displays front image of top cards from the tableau piles
-function displayTopCard(i,x) {
+function displayTopCard(tableauArrayPile, tableauPileId) {
     try {
-        document.getElementById("tableau-"+x+"-"+x).src = tableau[i][tableau[i].length-1].frontImage;
-        document.getElementById("tableau-"+x+"-"+x).style.display = "";
+        document.getElementById("tableau-"+tableauPileId+"-"+tableauPileId).src = tableau[tableauArrayPile][tableau[tableauArrayPile].length-1].frontImage;
+        document.getElementById("tableau-"+tableauPileId+"-"+tableauPileId).style.display = "";
     }
     // displays nothing as the img src if the tableau pile is 0
     catch (err) {
-        document.getElementById("tableau-"+x+"-"+x).style = "none";
-        document.getElementById("tableau-"+x+"-"+x).style.zIndex = "-1";
+        document.getElementById("tableau-"+tableauPileId+"-"+tableauPileId).style = "none";
+        document.getElementById("tableau-"+tableauPileId+"-"+tableauPileId).style.zIndex = "-1";
     }
 }
 
 // loops through tableau piles from left to right
 // and places cards into tableau piles
-function dealCards(num) {
+function dealCards(tableauArrayPile) {
     // loops through piles
-    for (let i=num; i < 7; i++) {
+    for (let i=tableauArrayPile; i < 7; i++) {
         
     // place card into tableau pile
     tableau[i].push(stock[stock.length-1]);
@@ -569,9 +569,7 @@ function dragDrop(event) {
         console.log("Not dropped on a valid target/pile");
     }
 }
-}
 
-newGame();
 
 
 // TESTING
