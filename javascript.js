@@ -265,6 +265,19 @@ function checkOrder(moveFrom, moveTo) {
     return isBigger;
 }
 
+// check matching suits prior to move
+function checkSuit(moveFrom, moveTo) {
+    // get suits of the cards being moved and stacked on
+    let suitFrom = tableau[moveFrom][tableau[moveFrom].length-1].suit;
+    let suitTo = foundation[moveTo][foundation[moveTo].length-1].suit;
+    
+    // boolean for comparing the suits
+    let sameSuit = (suitFrom == suitTo);
+
+    // returns boolean
+    return sameSuit;
+}
+
 // updates tableau display after a moveTableauCard has occurred
 function updateDisplay(moveFrom, moveTo) {
     showNextFrontImage(moveFrom);
@@ -460,6 +473,8 @@ wasteQuery.addEventListener('dragend', dragEnd);
 for(const foundation of foundations) {
     foundation.addEventListener('dragover', dragOver);
     foundation.addEventListener('drop', dragDrop);
+    foundation.addEventListener('dragover', dragOver);
+    foundation.addEventListener('drop', dragDrop);
 }
 
 // loop through tableau and call drag events
@@ -552,6 +567,15 @@ function dragDrop(event) {
     else if (droppedTargetSplit[0] == "foundation") {
         let foundationArrayPile = droppedTargetSplit[1]-1;
         let fPile = foundation[foundationArrayPile];
+
+        // if foundation pile is empty
+        if (foundation[foundationArrayPile].length === 0) {
+            canFillFoundation(foundationArrayPile, moveFrom);
+        }
+        // if foundation pile is not empty
+        else {
+            
+        }
         
         console.log(fPile);
     }
@@ -564,3 +588,6 @@ function dragDrop(event) {
 
 
 // TESTING
+
+
+
