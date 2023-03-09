@@ -9,117 +9,113 @@ const suits = ["hearts", "diamonds", "spades", "clubs"];
 
 // Array of values
 const values = ["ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"];
+function createDeck() {
+    // Class deck represents a deck of cards
+    class Deck {
+      constructor() {
+        this.deck = [];
+        this.reset();
+      }
 
-// Class deck represents a deck of cards
-class Deck {
-  constructor() {
-    this.deck = [];
-    this.reset();
-  }
+      //Create a deck of cards
+      reset() {
+        this.deck = [];
+        for (let suit of suits) {
+          for (let value of values) {      
+            this.deck.push(`${value}_of_${suit}`);
+          }
+        }
+        return this;
+      }
 
-  //Create a deck of cards
-  reset() {
-    this.deck = [];
-    for (let suit of suits) {
-      for (let value of values) {      
-        this.deck.push(`${value}_of_${suit}`);
+      //Shuffle the deck of cards
+      shuffle() {
+        let currentIndex = this.deck.length,
+          temporaryValue,
+          randomIndex;
+
+        while (0 !== currentIndex) {
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
+          temporaryValue = this.deck[currentIndex];
+          this.deck[currentIndex] = this.deck[randomIndex];
+          this.deck[randomIndex] = temporaryValue;
+        }
+        return this;
       }
     }
-    return this;
-  }
-
-  //Shuffle the deck of cards
-  shuffle() {
-    let currentIndex = this.deck.length,
-      temporaryValue,
-      randomIndex;
-
-    while (0 !== currentIndex) {
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex -= 1;
-      temporaryValue = this.deck[currentIndex];
-      this.deck[currentIndex] = this.deck[randomIndex];
-      this.deck[randomIndex] = temporaryValue;
-    }
-    return this;
-  }
+    const deck = new Deck();
+    deck.shuffle().deck;
+    return deck;
 }
 
 // Create a new deck of cards
-const deck = new Deck();
-
-//Output the deck of cards
-console.log(deck.shuffle().deck);
-
-
-// variable names of counters in the for loops should probably be more clear
-// daniel will *hopefully* clean it up after the first assignment
-// x identifies the tableau pile id
-// i identifies the array pile
+const deck = createDeck();
 
 // stock pile
 const stock = stockPile();
 
 // tableau piles
 const tableau = [[],[],[],[],[],[],[]];
-let x = 0;
+
+// identify tableau pile id
+let tableauPileId = 0;
 
 // foundation piles
 const foundation = [[],[],[],[]];
 
-
 // waste pile
 const waste = [];
 
-setupTableau()
-console.log(tableau);
+// setup the tableau / deal cards
+setupGame()
     
 // setup tableau
-function setupTableau() {
-    for (let i=0;i < 7;i++) {
-        x = i+1;
-        dealCards(i);
-        displayBottomCards(i,x);
-        displayTopCard(i,x);
+function setupGame() {
+    for (let tableauArrayIndex=0;tableauArrayIndex < 7;tableauArrayIndex++) {
+        tableauPileId = tableauArrayIndex+1;
+        dealCards(tableauArrayIndex);
+        displayBottomCards(tableauArrayIndex,tableauPileId);
+        displayTopCard(tableauArrayIndex,tableauPileId);
         layerSetup();
     }
 }
 
 // displays back image of bottom cards from the tableau piles
-function displayBottomCards(i,x) {
+function displayBottomCards(tableauArrayIndex,tableauPileId) {
     // any tableau piles with more than one card
-    if (tableau[i].length > 1) {
+    if (tableau[tableauArrayIndex].length > 1) {
         // first loop
         // "a" identifies the card position in the array
-        for (let a=0; a < tableau[i].length-1; a++){
+        for (let a=0; a < tableau[tableauArrayIndex].length-1; a++){
             // second loop
             // "b" identifies the tableau card id
-            for (let b=1; b < tableau[i].length; b++) {
-                document.getElementById("tableau-"+x+"-"+b).src = tableau[i][a].backImage;
-                document.getElementById("tableau-"+x+"-"+b).style.display = "";
+            for (let b=1; b < tableau[tableauArrayIndex].length; b++) {
+                document.getElementById("tableau-"+tableauPileId+"-"+b).src = tableau[tableauArrayIndex][a].backImage;
+                document.getElementById("tableau-"+tableauPileId+"-"+b).style.display = "";
             }
         }
     }
 }
 
 // displays front image of top cards from the tableau piles
-function displayTopCard(i,x) {
+function displayTopCard(tableauArrayIndex,tableauPileId) {
     try {
-        document.getElementById("tableau-"+x+"-"+x).src = tableau[i][tableau[i].length-1].frontImage;
-        document.getElementById("tableau-"+x+"-"+x).style.display = "";
+        document.getElementById("tableau-"+tableauPileId+"-"+tableauPileId).src = tableau[tableauArrayIndex][tableau[tableauArrayIndex].length-1].frontImage;
+        document.getElementById("tableau-"+tableauPileId+"-"+tableauPileId).style.display = "";
     }
     // displays nothing as the img src if the tableau pile is 0
     catch (err) {
-        document.getElementById("tableau-"+x+"-"+x).style = "none";
-        document.getElementById("tableau-"+x+"-"+x).style.zIndex = "-1";
+        document.getElementById("tableau-"+tableauPileId+"-"+tableauPileId).style = "none";
+        document.getElementById("tableau-"+tableauPileId+"-"+tableauPileId).style.zIndex = "-1";
     }
 }
 
 // loops through tableau piles from left to right
 // and places cards into tableau piles
-function dealCards(num) {
+function dealCards(tableauArrayIndex) {
     // loops through piles
-    for (let i=num; i < 7; i++) {
+    for (let i=tableauArrayIndex; i < 7; i++) {
         
     // place card into tableau pile
     tableau[i].push(stock[stock.length-1]);
@@ -619,7 +615,6 @@ function dragDrop(event) {
             
         }
         
-        console.log(fPile);
     }
     
     // card dropped on an invalid area
