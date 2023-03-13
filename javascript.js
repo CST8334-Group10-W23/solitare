@@ -67,6 +67,9 @@ const foundation = [[],[],[],[]];
 // waste pile
 const waste = [];
 
+// check if king
+let isKing = false;
+
 // setup the tableau / deal cards
 setupGame()
     
@@ -211,6 +214,7 @@ function moveTableauCard(moveFrom, moveTo, moveCard) {
     
     // spare tableau spots can only be filled with kings
     else if (tableau[moveTo].length === 0) {
+        isKing = true;
         fillTableauSpot(moveFrom, moveTo);
     }
     
@@ -228,29 +232,9 @@ function moveTableauCard(moveFrom, moveTo, moveCard) {
     // card colors are not the same, proceed
     else {
         // move card from one array pile to another
-         console.log(whatClass[0]);
+
         if (whatClass[0] == "card") {
-            for (let i=cardRow; i < pileLength; i++) {
-                cardPile[cardPile.length] = moveFrom.pop();
-                
-                
-                           
-            
-            }
-            
-            for (let i=cardRow; i < pileLength; i++) {
-                console.log("for loop two "+i)
-                tableau[moveTo][tableau[moveTo].length] = cardPile.pop();
-                updateDisplay(moveFrom, moveTo, i);   
-
-                // identify the tableau row
-                let tableauRow = document.getElementById("tableau"+(moveTo+1)+"-row"+(tableau[moveTo].length));
-
-                // change the zIndex on the tableauRow to layer it on top
-                tableauRow.style.zIndex = (tableau[moveTo].length)*10;  
-            }
-            
-            keepBlankCard(moveFrom);
+            movePile(moveFrom, moveTo);
                         
         }
         else {
@@ -265,6 +249,32 @@ function moveTableauCard(moveFrom, moveTo, moveCard) {
         }
         
     }
+}
+
+let isPile = false;
+
+function movePile(moveFrom, moveTo) {
+    for (let i=cardRow; i < pileLength; i++) {
+        cardPile[cardPile.length] = moveFrom.pop();                          
+            
+        }
+            
+    for (let i=cardRow; i < pileLength; i++) {
+        console.log("for loop two "+i)
+        
+        isPile = true;
+        
+        tableau[moveTo][tableau[moveTo].length] = cardPile.pop();
+        updateDisplay(moveFrom, moveTo, i);   
+
+        // identify the tableau row
+        let tableauRow = document.getElementById("tableau"+(moveTo+1)+"-row"+(tableau[moveTo].length));
+
+        // change the zIndex on the tableauRow to layer it on top
+        tableauRow.style.zIndex = (tableau[moveTo].length)*10;  
+    }
+            
+    keepBlankCard(moveFrom);
 }
 
 // check value order of cards being moved
@@ -379,14 +389,14 @@ function keepBlankCard(moveFrom) {
 
 function removeFrontImage(moveFrom, i) {
     let imgId;
-    console.log(droppedTargetSplit);
-    console.log(whatClass[0]);
-
     
-    if (droppedTargetSplit[0] == "foundation") {
+//    console.log(droppedTargetSplit);
+//    console.log(whatClass[0]);
+    
+    if (droppedTargetSplit[0] === "foundation") {
         imgId = document.getElementById("tableau-"+tableauColFrom+"-"+(moveFrom.length+1));
     }
-    
+        
     else if (whatClass[0] === "card") {
         // identify img element id
         imgId = document.getElementById("tableau-"+tableauColFrom+"-"+(i+1));
@@ -399,9 +409,15 @@ function removeFrontImage(moveFrom, i) {
         // removes front image of the moveFrom tableau pile   
         imgId.src = "";
         imgId.style.display = "none";
+        
+        console.log("i is "+ i);
+        console.log("tableau col is "+tableauColFrom);
 
         // layers row to the background
+        // something going wrong here with kings into empty tableau spot
         let row = document.getElementById("tableau"+tableauColFrom+"-row"+(i+1));
+        console.log(row);
+        
         row.style.zIndex = 0;
     }
     
@@ -421,10 +437,18 @@ function showMovedFrontImage(moveTo) {
 
 // spare tableau spots can only be filled with kings
 function fillTableauSpot(moveFrom, moveTo) { 
-    if (moveFrom[moveFrom.length-1].value === "king") {
+    if (moveCard.value === "king") {
+        
         // remove card from moveFrom pile and move to moveTo pile
-        tableau[moveTo][tableau[moveTo].length] = moveFrom.pop();
-        updateDisplay(moveFrom, moveTo);
+        if (whatClass[0] === "waste") {
+            tableau[moveTo][tableau[moveTo].length] = moveFrom.pop();
+            updateDisplay(moveFrom, moveTo);
+        }
+        else if (whatClass[0] === "card") {
+            movePile(moveFrom, moveTo);
+        }
+        
+//        updateDisplay(moveFrom, moveTo);
     } else { 
         alert("Cannot move card! \nOnly kings can fill an empty tableau spot");
     }  
