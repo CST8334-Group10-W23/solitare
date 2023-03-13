@@ -176,14 +176,14 @@ function stockPile() {
 }
 
 // move most front card of tableau pile to another pile
-function moveTableauCard(moveFrom, moveTo) {
+function moveTableauCard(moveFrom, moveTo, moveCard) {
         
     let moveToColor, moveFromColor;
         
     // try to retrieve color from top card of moveFrom pile
     try {
 //        moveFromColor = tableau[moveFrom][tableau[moveFrom].length-1].color;
-        moveFromColor = moveFrom[moveFrom.length-1].color;
+        moveFromColor = moveCard.color;
     }
     // catch if there is no card (empty pile)
     catch (err) {
@@ -221,28 +221,56 @@ function moveTableauCard(moveFrom, moveTo) {
     }
     
     // cards can only be stacked in the proper order 
-    else if (checkOrder(moveFrom,moveTo)) {
+    else if (checkOrder(moveCard,moveTo)) {
         alert("Cards can only be stacked in descending order.\nKing, Queen, Jack, 10, 9, 8, 7, 6, 5, 4, 3, 2, Ace");
     }
     
     // card colors are not the same, proceed
     else {
-            // move card from one array pile to another
+        // move card from one array pile to another
+         console.log(whatClass[0]);
+        if (whatClass[0] == "card") {
+            for (let i=cardRow; i < pileLength; i++) {
+                cardPile[cardPile.length] = moveFrom.pop();
+                
+                
+                           
+            
+            }
+            
+            for (let i=cardRow; i < pileLength; i++) {
+                console.log("for loop two "+i)
+                tableau[moveTo][tableau[moveTo].length] = cardPile.pop();
+                updateDisplay(moveFrom, moveTo, i);   
+
+                // identify the tableau row
+                let tableauRow = document.getElementById("tableau"+(moveTo+1)+"-row"+(tableau[moveTo].length));
+
+                // change the zIndex on the tableauRow to layer it on top
+                tableauRow.style.zIndex = (tableau[moveTo].length)*10;  
+            }
+            
+            keepBlankCard(moveFrom);
+                        
+        }
+        else {
             tableau[moveTo][tableau[moveTo].length] = moveFrom.pop();
-            updateDisplay(moveFrom, moveTo);
+            updateDisplay(moveFrom, moveTo);  
             
             // identify the tableau row
             let tableauRow = document.getElementById("tableau"+(moveTo+1)+"-row"+(tableau[moveTo].length));
 
             // change the zIndex on the tableauRow to layer it on top
             tableauRow.style.zIndex = (tableau[moveTo].length)*10;  
+        }
+        
     }
 }
 
 // check value order of cards being moved
 function checkOrder(moveFrom, moveTo) {
     // get values of the cards being moved and stacked on
-    let valueFrom = values.indexOf(moveFrom[moveFrom.length-1].value);
+    let valueFrom = values.indexOf(moveCard.value);
     let valueTo = values.indexOf(tableau[moveTo][tableau[moveTo].length-1].value);
     
     // check which card has the higher value
@@ -299,15 +327,15 @@ function foundationCheckOrder(moveFrom, moveTo) {
 }
 
 // updates tableau display after a moveTableauCard has occurred
-function updateDisplay(moveFrom, moveTo) {
+function updateDisplay(moveFrom, moveTo, i) {
     showNextFrontImage(moveFrom);
-    removeFrontImage(moveFrom);
+    removeFrontImage(moveFrom, i);
     showMovedFrontImage(moveTo);  
 }
 
 function showNextFrontImage(moveFrom) {
 
-    if (whatClass[0] === "tableau") { 
+    if (whatClass[0] === "card") { 
 // displays next front image of the moveFrom tableau pile
         try {
             document.getElementById("tableau-"+tableauColFrom+"-"+moveFrom.length).src = moveFrom[moveFrom.length-1].frontImage;
@@ -330,32 +358,56 @@ function showNextFrontImage(moveFrom) {
     }
 }
 
-function removeFrontImage(moveFrom) {
-    
-    if (whatClass[0] === "tableau") {
+function keepBlankCard(moveFrom) {
+    if (whatClass[0] === "card") {
         // identify img element id
-        let imgId = document.getElementById("tableau-"+tableauColFrom+"-"+(moveFrom.length+1));
-
+        let imgId = document.getElementById("tableau-"+tableauColFrom+"-1");
+        console.log(imgId);
+        console.log(moveFrom.length);
+        
         // if the pile will be empty after the move
         if (moveFrom.length == 0){
             // keeps an img element available
             // this is to make sure a card can still be placed on the empty pile afterwards
             imgId.src = "images/blank_card.png";
-        }
-
-        // another card is available
-        else {
-            // removes front image of the moveFrom tableau pile   
-            imgId.src = "";
-            imgId.style.display = "none";
-
-            // layers row to the background
-            let row = document.getElementById("tableau"+tableauColFrom+"-row"+(moveFrom.length+1));
-            row.style.zIndex = 0;
+            imgId.style.display = "";
+            let row = document.getElementById("tableau"+tableauColFrom+"-row1");
+            row.style.zIndex = 10;
         }
     }
-
 }
+
+function removeFrontImage(moveFrom, i) {
+    let imgId;
+    console.log(droppedTargetSplit);
+    console.log(whatClass[0]);
+
+    
+    if (droppedTargetSplit[0] == "foundation") {
+        imgId = document.getElementById("tableau-"+tableauColFrom+"-"+(moveFrom.length+1));
+    }
+    
+    else if (whatClass[0] === "card") {
+        // identify img element id
+        imgId = document.getElementById("tableau-"+tableauColFrom+"-"+(i+1));
+    }
+
+    console.log(imgId);
+    
+    if (whatClass[0] != "waste") {
+        // another card is available
+        // removes front image of the moveFrom tableau pile   
+        imgId.src = "";
+        imgId.style.display = "none";
+
+        // layers row to the background
+        let row = document.getElementById("tableau"+tableauColFrom+"-row"+(i+1));
+        row.style.zIndex = 0;
+    }
+    
+    
+}
+
 
 // displays the moveFrom card in the moveTo tableau pile
 function showMovedFrontImage(moveTo) {
@@ -486,9 +538,17 @@ const wasteQuery = document.querySelector('.waste');
 const foundations = document.querySelectorAll('.foundation');
 // tableau pile elements
 const tableaus = document.querySelectorAll('.tableau');
+// card elements
+const cards = document.querySelectorAll('.card');
 
 let whatClass;
 let tableauColFrom;
+let whatCardId;
+let whatCardSrc;
+let cardPile = [];
+let cardRow;
+let pileLength;
+let droppedTargetSplit;
 
 // wasteQuery listeners
 wasteQuery.addEventListener('dragstart', dragStart);
@@ -496,18 +556,28 @@ wasteQuery.addEventListener('dragend', dragEnd);
 
 // loop through foundations and call drag events
 for(const foundation of foundations) {
-    foundation.addEventListener('drop', dragDrop);
     foundation.addEventListener('dragover', dragOver);
     foundation.addEventListener('drop', dragDrop);
 }
 
+
 // loop through tableau and call drag events
 for(const tableau of tableaus) {
-    tableau.addEventListener('dragstart', dragStart);
-    tableau.addEventListener('dragend', dragEnd);
-    tableau.addEventListener('dragover', dragOver);
+//    tableau.addEventListener('dragstart', dragStart);
+//    tableau.addEventListener('dragend', dragEnd);
+//    tableau.addEventListener('dragover', dragOver);
     tableau.addEventListener('drop', dragDrop);
 }
+
+
+// loop through each card and call drag events
+for (const card of cards) {
+    card.addEventListener('dragstart', dragStart);
+    card.addEventListener('dragend', dragEnd);
+    card.addEventListener('dragover', dragOver);
+//    card.addEventListener('drop', dragDrop);
+}
+
 
 // drag functions
 
@@ -520,6 +590,13 @@ function dragStart(event) {
     if (whatClass[0] === "tableau") {
         tableauColFrom = whatClass[1].slice(11);
     }
+    console.log()
+    let whatElement = document.getElementsByClassName("hold");
+    whatCardSrc = whatElement[0].getAttribute("src");
+    whatCardId = whatElement[0].getAttribute("id").split("-");
+    cardRow = whatCardId[2]-1;
+    tableauColFrom = whatCardId[1];
+    console.log(whatClass);
     
 }
 
@@ -530,9 +607,15 @@ function dragEnd() {
     if (whatClass[0] == "waste") {
         this.className = "waste";
     }
+    /*
     // return card back to tableau pile if not dropped on a valid pile
     else if (whatClass[0] == "tableau") {
         this.className = whatClass[0]+" "+whatClass[1]+" "+whatClass[2];
+    }
+    */
+    // return card back to card class
+    else if (whatClass[0] == "card") {
+        this.className = "card";
     }
 }
 
@@ -554,14 +637,16 @@ function dragDrop(event) {
     // identify pile where dropped
     let dropped = event.target;
     // split the dropped element id to identify and use elements
-    let droppedTargetSplit = dropped.id.split('-');
+    droppedTargetSplit = dropped.id.split('-');
     
     // card moving from waste pile
     if (whatClass[0] == "waste") {
         moveFrom = waste;
         moveCard = waste[waste.length-1];
+        console.log(moveCard);
     } 
     
+    /*
     // card moving from tableau pile
     else if (whatClass[0] == "tableau") {
         // identify the card that the tableau pile is being moved from
@@ -570,11 +655,27 @@ function dragDrop(event) {
         // moveCard not being used yet
         moveCard = moveFrom[moveFrom.length-1];         
     }
+    */
+    
+    // tableau card
+    else if (whatClass[0] == "card") {
+        // if card trying to be moved has not been discovered
+        if (whatCardSrc == "images/deck_backing.jpg"){
+            console.log("SONK");
+        }
+        // if card has been discovered
+        else {
+            pileLength = tableau[(whatCardId[1]-1)].length;
+            moveFrom = tableau[(whatCardId[1]-1)];
+            moveCard = moveFrom[cardRow];
+            console.log(moveCard);
+        }
+    }
     
     else {
         console.log("something else");
     }
-        
+
     // card dropped on a tableau pile
     if (droppedTargetSplit[0] == "tableau") {
         // identify the target tableau array pile
@@ -584,9 +685,10 @@ function dragDrop(event) {
         let tableauArrayCard = droppedTargetSplit[2]-1;
         
         // call function to move cards
-        moveTableauCard(moveFrom, moveTo);
+        moveTableauCard(moveFrom, moveTo, moveCard);
     } 
-    
+
+        
     // card dropped on a foundation pile
     else if (droppedTargetSplit[0] == "foundation") {
         let foundationArrayPile = droppedTargetSplit[1]-1;
