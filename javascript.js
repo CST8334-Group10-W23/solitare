@@ -274,7 +274,7 @@ function movePile(moveFrom, moveTo) {
         tableauRow.style.zIndex = (tableau[moveTo].length)*10;  
     }
             
-    keepBlankCard(moveFrom);
+//    keepBlankCard(moveFrom);
 }
 
 // check value order of cards being moved
@@ -371,16 +371,14 @@ function showNextFrontImage(moveFrom) {
 function keepBlankCard(moveFrom) {
     if (whatClass[0] === "card") {
         // identify img element id
-        let imgId = document.getElementById("tableau-"+tableauColFrom+"-1");
-        console.log(imgId);
-        console.log(moveFrom.length);
-        
+        let baseImgId = document.getElementById("tableau-"+tableauColFrom+"-1");
+
         // if the pile will be empty after the move
         if (moveFrom.length == 0){
             // keeps an img element available
             // this is to make sure a card can still be placed on the empty pile afterwards
-            imgId.src = "images/blank_card.png";
-            imgId.style.display = "";
+            baseImgId.src = "images/blank_card.png";
+            baseImgId.style.display = "";
             let row = document.getElementById("tableau"+tableauColFrom+"-row1");
             row.style.zIndex = 10;
         }
@@ -389,37 +387,33 @@ function keepBlankCard(moveFrom) {
 
 function removeFrontImage(moveFrom, i) {
     let imgId;
+    let row;
     
-//    console.log(droppedTargetSplit);
-//    console.log(whatClass[0]);
-    
+    console.log(droppedTargetSplit[0])
     if (droppedTargetSplit[0] === "foundation") {
+        // identify img element id
         imgId = document.getElementById("tableau-"+tableauColFrom+"-"+(moveFrom.length+1));
+        // identify row
+        row = document.getElementById("tableau"+tableauColFrom+"-row"+(moveFrom.length+1));
     }
         
     else if (whatClass[0] === "card") {
         // identify img element id
         imgId = document.getElementById("tableau-"+tableauColFrom+"-"+(i+1));
+        // identify row
+        row = document.getElementById("tableau"+tableauColFrom+"-row"+(i+1));
     }
-
-    console.log(imgId);
     
     if (whatClass[0] != "waste") {
         // another card is available
         // removes front image of the moveFrom tableau pile   
         imgId.src = "";
         imgId.style.display = "none";
-        
-        console.log("i is "+ i);
-        console.log("tableau col is "+tableauColFrom);
 
         // layers row to the background
-        // something going wrong here with kings into empty tableau spot
-        let row = document.getElementById("tableau"+tableauColFrom+"-row"+(i+1));
-        console.log(row);
-        
         row.style.zIndex = 0;
     }
+    keepBlankCard(moveFrom);
     
     
 }
