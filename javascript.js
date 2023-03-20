@@ -743,12 +743,11 @@ wasteQuery.addEventListener("click", onClickMove);
 
 // move on click if available
 function onClickMove() {
+        
     let moveFrom;
-    click = true;
     
     this.className += " clicked";
     whatClass = this.className.split(" ");
-    
     
     console.log("click occurred on: "+whatClass[0]);
     
@@ -784,12 +783,14 @@ function onClickMove() {
 
         
     }
-    
-    
-    
+             
+    click = true;
+             
     checkAvailability(moveCard, moveFrom);
     
-    this.className = whatClass[0];
+    // return back to normal state
+    this.className = whatClass[0];    
+    click = false;
     
 }
 
@@ -800,6 +801,10 @@ function checkAvailability(moveCard, moveFrom) {
     // check foundations first
     for (let i = 1; i <= foundations.length; i++) {
                 
+        // exception handling if the pile is empty
+        if (whatClass[0] === "waste" && waste.length === 0) break;
+        else if (whatClass[0] === "card" && tableau[(parseInt(whatCardId[1])-1)].length === 0) break;
+        
         checkMove = true;
         
         // identify img idfor foundation pile
@@ -811,7 +816,6 @@ function checkAvailability(moveCard, moveFrom) {
             canFillFoundation((i-1), moveFrom);
             if (checkMove === false) {
                 foundationClickSuccess = true;
-                click = false;
                 break;
             } 
         }
@@ -830,7 +834,6 @@ function checkAvailability(moveCard, moveFrom) {
             else {
                 moveFoundationCard(i-1, moveFrom);
                 foundationClickSuccess = true;
-                click = false;
                 break;
             }
         }
@@ -847,13 +850,10 @@ function checkAvailability(moveCard, moveFrom) {
             moveTableauCard(moveFrom, moveTo, moveCard)
             
             if (checkMove === false) {
-                click = false;
                 break;
             }   
         }
     }
-    
-    click = false;
 }
 
 
