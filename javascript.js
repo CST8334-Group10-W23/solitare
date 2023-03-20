@@ -237,11 +237,12 @@ function moveTableauCard(moveFrom, moveTo, moveCard) {
     else {
                 
         // move card from one array pile to another
-        if (whatClass[0] == "card") {
+        if (whatClass[0] === "card") {
             movePile(moveFrom, moveTo);
                         
         }
         else {
+            
             tableau[moveTo][tableau[moveTo].length] = moveFrom.pop();
             updateDisplay(moveFrom, moveTo);  
             
@@ -345,7 +346,8 @@ function updateDisplay(moveFrom, moveTo, i) {
 }
 
 function showNextFrontImage(moveFrom) {
-
+    let imgId;
+    
     if (whatClass[0] === "card") { 
 // displays next front image of the moveFrom tableau pile
         try {
@@ -353,12 +355,22 @@ function showNextFrontImage(moveFrom) {
 
         }
         // catch if there is no card (empty pile)
-        catch (e){
+        catch (e) {
             document.getElementById("tableau-"+tableauColFrom+"-1").src = "images/blank_card.png";
         }
     }
+    else if (whatClass[0] === "foundation") {
+        imgId = document.getElementById("foundation-"+whatCardId[1]);
+        try {
+            imgId.src = moveFrom[moveFrom.length-1].frontImage;
+        }
+        catch (e) {
+            imgId.src = "images/blank_card.png";
+        }
+        
+    }
     else {
-        let imgId = document.getElementById("waste");
+        imgId = document.getElementById("waste");
         try {
             imgId.src = waste[waste.length-1].frontImage;
         }
@@ -380,8 +392,10 @@ function keepBlankCard(moveFrom) {
             // this is to make sure a card can still be placed on the empty pile afterwards
             baseImgId.src = "images/blank_card.png";
             baseImgId.style.display = "";
-            let row = document.getElementById("tableau"+tableauColFrom+"-row1");
-            row.style.zIndex = 10;
+            if (whatClass[0] != "foundation") {
+                let row = document.getElementById("tableau"+tableauColFrom+"-row1");
+                row.style.zIndex = 10;
+            }
         }
     }
 }
@@ -391,7 +405,7 @@ function removeFrontImage(moveFrom, i) {
     let row;
     
     if (whatClass[0] === "waste") {
-        console.log("waste")
+//        console.log("waste")
     }
     
     else if (droppedTargetSplit[0] === "foundation" || toFoundation) {
@@ -399,10 +413,10 @@ function removeFrontImage(moveFrom, i) {
         imgId = document.getElementById("tableau-"+tableauColFrom+"-"+(moveFrom.length+1));
         // identify row
         row = document.getElementById("tableau"+tableauColFrom+"-row"+(moveFrom.length+1));
-        
-//        toFoundation = false;
     }
-    
+    else if (whatClass[0] === "foundation") {
+        imgId = document.getElementById("foundation-"+(whatCardId[1]));
+    }
     else if (whatClass[0] === "card") {
         // identify img element id
         imgId = document.getElementById("tableau-"+tableauColFrom+"-"+(i+1));
@@ -410,14 +424,16 @@ function removeFrontImage(moveFrom, i) {
         row = document.getElementById("tableau"+tableauColFrom+"-row"+(i+1));
     }
     
-    if (whatClass[0] != "waste") {
+    if (whatClass[0] === "card") {
         // another card is available
         // removes front image of the moveFrom tableau pile   
         imgId.src = "";
         imgId.style.display = "none";
 
-        // layers row to the background
-        row.style.zIndex = 0;
+//        if (whatClass[0] != "foundation") {
+            // layers row to the background
+            row.style.zIndex = 0;
+//        }
     }
     keepBlankCard(moveFrom);    
 }
@@ -581,6 +597,7 @@ wasteQuery.addEventListener('dragend', dragEnd);
 for(const foundation of foundations) {
     foundation.addEventListener('dragover', dragOver);
     foundation.addEventListener('drop', dragDrop);
+    foundation.addEventListener('click', onClickMove);
 }
 
 
@@ -619,6 +636,8 @@ function dragStart(event) {
     whatCardId = whatElement[0].getAttribute("id").split("-");
     cardRow = whatCardId[2]-1;
     tableauColFrom = whatCardId[1];    
+    
+    setTimeout(() => this.className = 'invisible', 0);
 }
 
 // triggers when the drag is released
@@ -659,7 +678,7 @@ function dragDrop(event) {
     if (whatClass[0] == "waste") {
         moveFrom = waste;
         moveCard = waste[waste.length-1];
-        console.log(moveCard);
+//        console.log(moveCard);
     } 
     
     // tableau card
@@ -672,14 +691,10 @@ function dragDrop(event) {
             pileLength = tableau[(whatCardId[1]-1)].length;
             moveFrom = tableau[(whatCardId[1]-1)];
             moveCard = moveFrom[cardRow];
-            console.log(moveCard);
+//            console.log(moveCard);
         }
     }
     
-    else {
-        console.log("something else");
-    }
-
     // card dropped on a tableau pile
     if (droppedTargetSplit[0] == "tableau") {
         // identify the target tableau array pile
@@ -722,20 +737,13 @@ function dragDrop(event) {
         }
         
     }
-    
-    // card dropped on an invalid area
-    else {
-        console.log("Not dropped on a valid target/pile");
-    }
 }
-
-// TESTING
-
 
 // click events
 
 let click;
 let checkMove;
+let breakMe;
 
 // listen for click on waste pile
 wasteQuery.addEventListener("click", onClickMove);
@@ -745,6 +753,7 @@ wasteQuery.addEventListener("click", onClickMove);
 function onClickMove() {
         
     let moveFrom;
+    breakMe = false;
     
     this.className += " clicked";
     whatClass = this.className.split(" ");
@@ -754,90 +763,97 @@ function onClickMove() {
     if (whatClass[0] === "waste") {
         moveFrom = waste;
         moveCard = waste[waste.length-1];
-        console.log(moveCard);
+//        console.log(moveCard);
     } 
     
+    else if (whatClass[0] === "foundation") {
+        // identify pile
+        let whatElement = document.getElementsByClassName("clicked");
+        whatCardId = whatElement[0].firstElementChild.getAttribute("id").split("-");
+        
+        moveFrom = foundation[(whatCardId[1]-1)];
+        moveCard = moveFrom[moveFrom.length-1];
+    }
+    
     else if (whatClass[0] === "card") {
+        // identify pile 
+        let whatElement = document.getElementsByClassName("clicked");
+        whatCardSrc = whatElement[0].getAttribute("src");
+        whatCardId = whatElement[0].getAttribute("id").split("-");
+
         // if card trying to be moved has not been discovered
         if (whatCardSrc === "images/deck_backing.jpg") {
-            console.log("click on undiscovered card");
-        }
-        // if card has been discovered
-        else {
-            let whatElement = document.getElementsByClassName("clicked");
-            
-//            console.log(whatElement);
-            
-            whatCardSrc = whatElement[0].getAttribute("src");
-            whatCardId = whatElement[0].getAttribute("id").split("-");
-            
-            cardRow = whatCardId[2]-1;
-            tableauColFrom = whatCardId[1];  
-            
-            pileLength = tableau[(whatCardId[1]-1)].length;
-            moveFrom = tableau[(whatCardId[1]-1)];
-            moveCard = moveFrom[cardRow];
-            
-
+            console.log("clicked on undiscovered card");
+            this.className = whatClass[0];
+            breakMe = true;
         }
 
-        
+        cardRow = whatCardId[2]-1;
+        tableauColFrom = whatCardId[1];  
+
+        pileLength = tableau[(whatCardId[1]-1)].length;
+        moveFrom = tableau[(whatCardId[1]-1)];
+        moveCard = moveFrom[cardRow];
     }
-             
+    
+    // exit function if card has not been discovered
+    if (breakMe === true) return null;
+    
     click = true;
+    checkMove = true;
              
     checkAvailability(moveCard, moveFrom);
     
     // return back to normal state
     this.className = whatClass[0];    
     click = false;
-    
+    checkMove = false;  
 }
-
+    
 // checks availability on click
 function checkAvailability(moveCard, moveFrom) {
     let foundationClickSuccess = false;
     
-    // check foundations first
-    for (let i = 1; i <= foundations.length; i++) {
-                
-        // exception handling if the pile is empty
-        if (whatClass[0] === "waste" && waste.length === 0) break;
-        else if (whatClass[0] === "card" && tableau[(parseInt(whatCardId[1])-1)].length === 0) break;
-        
-        checkMove = true;
-        
-        // identify img idfor foundation pile
-        let foundationId = document.getElementById("foundation-"+i); 
-        
-        // check if foundation pile is empty
-        // if move is successful break out of the loop
-        if (foundation[i-1].length === 0) {
-            canFillFoundation((i-1), moveFrom);
-            if (checkMove === false) {
-                foundationClickSuccess = true;
-                break;
-            } 
-        }
-        // if foundation pile is not empty
-        else {
-            // verifies that the suit is the same
-            if (!foundationCheckSuit(moveFrom, i-1)) {
-                console.log("cannot move "+moveCard.value+" of "+moveCard.suit+" to foundation-"+i+". Invalid suit.");
-            }
-            // verifies that the order is stacking in direct ascending order
-            else if (foundationCheckOrder(moveFrom, i-1)) {
-                console.log("cannot move "+moveCard.value+" of "+moveCard.suit+" to foundation-"+i+". Invalid order.");
-            }
-            // moves card if both conditions are met
+    if (whatClass[0] != "foundation") {
+        // check foundations first
+        for (let i = 1; i <= foundations.length; i++) {
+
+            // exception handling if the pile is empty
+            if (whatClass[0] === "waste" && waste.length === 0) break;
+            else if (whatClass[0] === "card" && tableau[(parseInt(whatCardId[1])-1)].length === 0) break;
+
+            // identify img idfor foundation pile
+            let foundationId = document.getElementById("foundation-"+i); 
+
+            // check if foundation pile is empty
             // if move is successful break out of the loop
-            else {
-                moveFoundationCard(i-1, moveFrom);
-                foundationClickSuccess = true;
-                break;
+            if (foundation[i-1].length === 0) {
+                canFillFoundation((i-1), moveFrom);
+                if (checkMove === false) {
+                    foundationClickSuccess = true;
+                    break;
+                } 
             }
-        }
-    }    
+            // if foundation pile is not empty
+            else {
+                // verifies that the suit is the same
+                if (!foundationCheckSuit(moveFrom, i-1)) {
+                    console.log("cannot move "+moveCard.value+" of "+moveCard.suit+" to foundation-"+i+". Invalid suit.");
+                }
+                // verifies that the order is stacking in direct ascending order
+                else if (foundationCheckOrder(moveFrom, i-1)) {
+                    console.log("cannot move "+moveCard.value+" of "+moveCard.suit+" to foundation-"+i+". Invalid order.");
+                }
+                // moves card if both conditions are met
+                // if move is successful break out of the loop
+                else {
+                    moveFoundationCard(i-1, moveFrom);
+                    foundationClickSuccess = true;
+                    break;
+                }
+            }
+        }    
+    }
     
     // check tableaus second
     if (!foundationClickSuccess) {
@@ -845,9 +861,9 @@ function checkAvailability(moveCard, moveFrom) {
             let tableauTopCard = tableau[i-1][tableau[i-1].length-1];
             
             let moveTo = (i-1);
-            
+                        
             // call function to move card
-            moveTableauCard(moveFrom, moveTo, moveCard)
+            moveTableauCard(moveFrom, moveTo, moveCard);
             
             if (checkMove === false) {
                 break;
@@ -856,9 +872,5 @@ function checkAvailability(moveCard, moveFrom) {
     }
 }
 
-
-
-
-
-
+// TESTING
 
