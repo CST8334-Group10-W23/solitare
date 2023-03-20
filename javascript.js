@@ -707,11 +707,11 @@ function dragDrop(event) {
         else {
             // verifies that the suit is the same
             if (!foundationCheckSuit(moveFrom, foundationArrayPile)) {
-                alert("Cannot move card! \nAdding on a foundation must be the same suit")
+//                alert("Cannot move card! \nAdding on a foundation must be the same suit")
             }
             // verifies that the order is stacking in direct ascending order
             else if (foundationCheckOrder(moveFrom, foundationArrayPile)) {
-                alert("Cannot move card! \nAdding on a foundation must follow ascending value \nAce, 2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King")
+//                alert("Cannot move card! \nAdding on a foundation must follow ascending value \nAce, 2, 3, 4, 5, 6, 7, 8, 9, 10, Jack, Queen, King")
             }
             // moves card if both conditions are met
             else {
