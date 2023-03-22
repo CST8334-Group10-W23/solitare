@@ -841,7 +841,7 @@ function checkAvailability(moveCard, moveFrom) {
             if (whatClass[0] === "waste" && waste.length === 0) break;
             else if (whatClass[0] === "card" && tableau[(parseInt(whatCardId[1])-1)].length === 0) break;
 
-            // identify img idfor foundation pile
+            // identify img id for foundation pile
             let foundationId = document.getElementById("foundation-"+i); 
 
             // check if foundation pile is empty
@@ -882,8 +882,7 @@ function checkAvailability(moveCard, moveFrom) {
             let moveTo = (i-1);
                         
             // call function to move card
-            moveTableauCard(moveFrom, moveTo, moveCard);
-            
+            moveTableauCard(moveFrom, moveTo, moveCard);                
             if (checkMove === false) break;   
         }
     }
@@ -912,6 +911,8 @@ function consoleLogMoveTableau(i) {
         case "card":
             console.log(moveCard.value+" of "+moveCard.suit+" from tableau-"+whatCardId[1]+"-"+whatCardId[2]+" to tableau-"+i+"-"+tableau[i-1].length);
             break;
+        case "foundation":
+            console.log(moveCard.value+" of "+moveCard.suit+" from foundation-"+whatCardId[1]+" to tableau-"+i+"-"+tableau[i-1].length);
         default:
             break;
     }
