@@ -205,13 +205,13 @@ function moveTableauCard(moveFrom, moveTo, moveCard) {
     // avoid dropping on the same tableau pile
     if (tableau[moveTo] === moveFrom) {
 //        alert("Cannot drop a card on same pile");
-        console.log("Cannot drop on same pile");
+//        console.log("Cannot drop on same pile");
     }
     
     // card colors are the same, display alert
     else if (moveToColor == moveFromColor) {
 //        alert("Cannot move card! \nStacking cards on a tableau pile must be of alternating colors");
-        console.log("Must be alternating color");
+//        console.log("Must be alternating color");
     }
     
     // spare tableau spots can only be filled with kings
@@ -224,13 +224,13 @@ function moveTableauCard(moveFrom, moveTo, moveCard) {
     // avoids undefined objects being moved to tableau piles
     else if (moveFrom.length === 0) {
 //        alert("Cannot move a card from a pile that has no card to move");
-        console.log("No card in pile");
+//        console.log("No card in pile");
     }
     
     // cards can only be stacked in the proper order 
     else if (checkOrder(moveCard,moveTo)) {
 //        alert("Cards can only be stacked in descending order.\nKing, Queen, Jack, 10, 9, 8, 7, 6, 5, 4, 3, 2, Ace");
-        console.log("Not in correct order");
+//        console.log("Not in correct order");
     }
     
     // card colors are not the same, proceed
@@ -251,12 +251,11 @@ function moveTableauCard(moveFrom, moveTo, moveCard) {
 
             // change the zIndex on the tableauRow to layer it on top
             tableauRow.style.zIndex = (tableau[moveTo].length)*10;  
+            
         }
-        checkMove = false;
+    checkMove = false;
     }
 }
-
-let isPile = false;
 
 function movePile(moveFrom, moveTo) {
     for (let i=cardRow; i < pileLength; i++) {
@@ -265,12 +264,15 @@ function movePile(moveFrom, moveTo) {
         }
             
     for (let i=cardRow; i < pileLength; i++) {
-        
-        isPile = true;
-        
-        tableau[moveTo][tableau[moveTo].length] = cardPile.pop();
-        updateDisplay(moveFrom, moveTo, i);   
 
+        tableau[moveTo][tableau[moveTo].length] = cardPile.pop();
+          
+        
+        moveCard = tableau[moveTo][tableau[moveTo].length-1];
+        whatCardId[2] = i+1;
+
+        updateDisplay(moveFrom, moveTo, i); 
+        
         // identify the tableau row
         let tableauRow = document.getElementById("tableau"+(moveTo+1)+"-row"+(tableau[moveTo].length));
 
@@ -343,6 +345,7 @@ function updateDisplay(moveFrom, moveTo, i) {
     showNextFrontImage(moveFrom);
     removeFrontImage(moveFrom, i);
     showMovedFrontImage(moveTo);  
+    consoleLogMoveTableau(moveTo+1);
 }
 
 function showNextFrontImage(moveFrom) {
@@ -460,9 +463,7 @@ function fillTableauSpot(moveFrom, moveTo) {
         else if (whatClass[0] === "card") {
             movePile(moveFrom, moveTo);
         }
-        
         checkMove = false;
-
     }  
 } 
 
@@ -499,6 +500,7 @@ function moveFoundationCard(foundationPile, moveFrom) {
     // displays foundation front card image        
     displayFoundationImage(foundationPile);
     
+    consoleLogMoveFoundation(foundationPile+1);
     toFoundation = false;
 }
 
@@ -512,10 +514,18 @@ function clickStockpile() {
         refillStockpile();
     }
     else {
-    // puts top stock pile card to the waste pile
-    waste[waste.length] = stock.pop();
-    // displays the front image of the top waste pile card
-    document.getElementById("waste").src = waste[waste.length-1].frontImage;  
+        // puts top stock pile card to the waste pile
+        waste[waste.length] = stock.pop();
+        // displays the front image of the top waste pile card
+        document.getElementById("waste").src = waste[waste.length-1].frontImage; 
+        let topWasteCard = waste[waste.length-1];
+        // console log the move
+        console.log(topWasteCard.value+" of "+topWasteCard.suit+" from stockpile to waste");
+    
+        // after move if the stockpile is empty show that there are no cards
+        if (stock.length === 0) {
+            document.getElementById("stock").src = "images/blank_card.png";
+        }
     }
       
 }
@@ -531,6 +541,8 @@ function refillStockpile() {
     }
     // remove the front image on the top waste pile card
     document.getElementById("waste").src = "images/blank_card.png";
+    document.getElementById("stock").src = "images/deck_backing.jpg";
+    console.log("STOCKPILE REFILLED")
 }
 
 // hide empty img elements and layer cards for tableau setup 
@@ -637,6 +649,15 @@ function dragStart(event) {
     cardRow = whatCardId[2]-1;
     tableauColFrom = whatCardId[1];    
     
+//    console.log(whatClass[0]);
+    if (whatClass[0] === "card") {
+        pileLength = tableau[(whatCardId[1]-1)].length;
+        
+        for (let i = 0; i < pileLength; i++) {
+            
+        }
+    }
+    
     setTimeout(() => this.className = 'invisible', 0);
 }
 
@@ -688,7 +709,7 @@ function dragDrop(event) {
         }
         // if card has been discovered
         else {
-            pileLength = tableau[(whatCardId[1]-1)].length;
+//            pileLength = tableau[(whatCardId[1]-1)].length;
             moveFrom = tableau[(whatCardId[1]-1)];
             moveCard = moveFrom[cardRow];
 //            console.log(moveCard);
@@ -706,13 +727,11 @@ function dragDrop(event) {
         // call function to move cards
         moveTableauCard(moveFrom, moveTo, moveCard);
     } 
-
         
     // card dropped on a foundation pile
     else if (droppedTargetSplit[0] == "foundation") {
         let foundationArrayPile = droppedTargetSplit[1]-1;
         let fPile = foundation[foundationArrayPile];
-
         
         // if foundation pile is empty
         if (foundation[foundationArrayPile].length === 0) {
@@ -758,7 +777,7 @@ function onClickMove() {
     this.className += " clicked";
     whatClass = this.className.split(" ");
     
-    console.log("click occurred on: "+whatClass[0]);
+//    console.log("click occurred on: "+whatClass[0]);
     
     if (whatClass[0] === "waste") {
         moveFrom = waste;
@@ -830,7 +849,7 @@ function checkAvailability(moveCard, moveFrom) {
             if (foundation[i-1].length === 0) {
                 canFillFoundation((i-1), moveFrom);
                 if (checkMove === false) {
-                    foundationClickSuccess = true;
+                    foundationClickSuccess = true;                    
                     break;
                 } 
             }
@@ -838,11 +857,11 @@ function checkAvailability(moveCard, moveFrom) {
             else {
                 // verifies that the suit is the same
                 if (!foundationCheckSuit(moveFrom, i-1)) {
-                    console.log("cannot move "+moveCard.value+" of "+moveCard.suit+" to foundation-"+i+". Invalid suit.");
+//                    console.log("cannot move "+moveCard.value+" of "+moveCard.suit+" to foundation-"+i+". Invalid suit.");
                 }
                 // verifies that the order is stacking in direct ascending order
                 else if (foundationCheckOrder(moveFrom, i-1)) {
-                    console.log("cannot move "+moveCard.value+" of "+moveCard.suit+" to foundation-"+i+". Invalid order.");
+//                    console.log("cannot move "+moveCard.value+" of "+moveCard.suit+" to foundation-"+i+". Invalid order.");
                 }
                 // moves card if both conditions are met
                 // if move is successful break out of the loop
@@ -865,10 +884,36 @@ function checkAvailability(moveCard, moveFrom) {
             // call function to move card
             moveTableauCard(moveFrom, moveTo, moveCard);
             
-            if (checkMove === false) {
-                break;
-            }   
+            if (checkMove === false) break;   
         }
+    }
+}
+
+// console log the move occur
+function consoleLogMoveFoundation(i) {
+    switch(whatClass[0]) {
+        case "waste":
+            console.log(moveCard.value+" of "+moveCard.suit+" from waste to foundation-"+i)
+            break;
+        case "card":
+            console.log(moveCard.value+" of "+moveCard.suit+" from tableau-"+whatCardId[1]+"-"+whatCardId[2]+" to foundation-"+i);
+            break;
+        default:
+            break;
+    }
+}
+
+// console log the move occur
+function consoleLogMoveTableau(i) {
+    switch(whatClass[0]) {
+        case "waste":
+            console.log(moveCard.value+" of "+moveCard.suit+" from waste to tableau-"+i+"-"+tableau[i-1].length)
+            break;
+        case "card":
+            console.log(moveCard.value+" of "+moveCard.suit+" from tableau-"+whatCardId[1]+"-"+whatCardId[2]+" to tableau-"+i+"-"+tableau[i-1].length);
+            break;
+        default:
+            break;
     }
 }
 
