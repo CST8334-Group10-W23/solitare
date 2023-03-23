@@ -160,7 +160,8 @@ button {
 /*Make <tr>s stack on top of each other as is done for tables above? */
 
 .hold {
-    border: solid #b34433 20px
+/*    border: solid #b34433 20px;*/
+/*    opacity: 0.1;*/
 }
 
 /* hides the element when applied to className */

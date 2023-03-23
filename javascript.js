@@ -510,7 +510,12 @@ document.getElementById("stock").addEventListener("click", function() { clickSto
 // function to move stock pile card to the waste pile
 function clickStockpile() {
     //refill stock pile if empty upon click
-    if (stock.length === 0) {
+    if (stock.length === 0 && waste.length === 0) {
+        document.getElementById("stock").src = "images/blank_card.png";
+        document.getElementById("waste").src = "images/blank_card.png";
+        console.log("STOCKPILE AND WASTE ARE EMPTY");
+    }
+    else if (stock.length === 0) {
         refillStockpile();
     }
     else {
@@ -615,9 +620,6 @@ for(const foundation of foundations) {
 
 // loop through tableau and call drag events
 for(const tableau of tableaus) {
-//    tableau.addEventListener('dragstart', dragStart);
-//    tableau.addEventListener('dragend', dragEnd);
-//    tableau.addEventListener('dragover', dragOver);
     tableau.addEventListener('drop', dragDrop);
 }
 
@@ -628,42 +630,63 @@ for (const card of cards) {
     card.addEventListener('dragend', dragEnd);
     card.addEventListener('dragover', dragOver);
     card.addEventListener('click', onClickMove);
-//    card.addEventListener('drop', dragDrop);
 }
 
+function queryHold() {
+    return document.querySelectorAll(".hold");
+}
 
 // drag functions
 
 // triggers when the drag is started
 function dragStart(event) {
-    console.log('start');
+    // appends hold to class name for the first card being clicked and dragged
     this.className += ' hold';
+        
     // to further identify the class name of what element is being dragged
     whatClass = this.className.split(" ");
-    if (whatClass[0] === "tableau") {
-        tableauColFrom = whatClass[1].slice(11);
-    }
+
+    // parsing the HTML to be used for specifying cards/piles/arrays
     let whatElement = document.getElementsByClassName("hold");
     whatCardSrc = whatElement[0].getAttribute("src");
     whatCardId = whatElement[0].getAttribute("id").split("-");
     cardRow = whatCardId[2]-1;
-    tableauColFrom = whatCardId[1];    
+    tableauColFrom = whatCardId[1];
     
-//    console.log(whatClass[0]);
+    if (whatCardSrc === "images/deck_backing.jpg") return null;
+    
+    // enters only if the card click and dragged was from the tableau
     if (whatClass[0] === "card") {
+        // identifies the tableau pile length from the card that was clicked and dragged 
         pileLength = tableau[(whatCardId[1]-1)].length;
-        
-        for (let i = 0; i < pileLength; i++) {
-            
+        // used to create a hold on all layered cards while dragging
+        // identifies the exact being clicked and dragged
+        let cardLocation = tableau[(whatCardId[1]-1)][(whatCardId[2]-2)];
+        // identifies the index of where that card sits in the array
+        // adding 1 to the index to get the proper HTML id
+        let indexCard = tableau[(whatCardId[1]-1)].indexOf(cardLocation)+1;
+        // identifies how many cards are being dragged / also if there is a pile
+        let pileOfCardsMoving = pileLength-indexCard;
+
+        // for loop to go through the cards that are in the pile being moved
+        // and applying class names to them, if there is a pile
+        for (let i = indexCard+1; i < pileLength; i++) {
+            // identifies the specific card in the pile being moved
+            let holdClass = document.getElementById("tableau-"+whatCardId[1]+"-"+(i+1));
+            // appends hold to class name
+            holdClass.className += ' hold';
+            // appends invisible to class name
+            holdClass.className += ' invisible';
+
         }
     }
-    
-    setTimeout(() => this.className = 'invisible', 0);
+    // appends invisible to class name for the first card being clicked and dragged
+    // sets card selected to be invisible when dragged
+    setTimeout(() => this.className += ' invisible', 0);
 }
 
 // triggers when the drag is released
 function dragEnd() {
-    console.log('end');
     // return card back to waste pile if not dropped on a valid pile
     if (whatClass[0] == "waste") {
         this.className = "waste";
@@ -671,7 +694,10 @@ function dragEnd() {
 
     // return card back to card class
     else if (whatClass[0] == "card") {
-        this.className = "card";
+        let holdClasses = queryHold();
+        for (const holding of holdClasses) {
+            holding.className = "card";
+        }
     }
 }
 
@@ -680,13 +706,10 @@ function dragEnd() {
 // when the drag is over a pile that is listening
 function dragOver(e) {
     e.preventDefault();
-    console.log('over');
 }
 
 // triggers when a drag and hold is dropped on a pile
 function dragDrop(event) {
-    console.log('drop');
-    
     // pile that the card will be moving from
     let moveFrom;
 
@@ -699,20 +722,16 @@ function dragDrop(event) {
     if (whatClass[0] == "waste") {
         moveFrom = waste;
         moveCard = waste[waste.length-1];
-//        console.log(moveCard);
     } 
     
     // tableau card
     else if (whatClass[0] == "card") {
         // if card trying to be moved has not been discovered
-        if (whatCardSrc == "images/deck_backing.jpg"){
-        }
+        if (whatCardSrc == "images/deck_backing.jpg") return null;
         // if card has been discovered
         else {
-//            pileLength = tableau[(whatCardId[1]-1)].length;
             moveFrom = tableau[(whatCardId[1]-1)];
             moveCard = moveFrom[cardRow];
-//            console.log(moveCard);
         }
     }
     
