@@ -238,11 +238,23 @@ function moveTableauCard(moveFrom, moveTo, moveCard) {
                 
         // move card from one array pile to another
         if (whatClass[0] === "card") {
+
             movePile(moveFrom, moveTo);
+
+            for (let i=cardRow; i < pileLength; i++) {
+                
+                // moved from
+                moveHistory[0][moveHistory[0].length] = tempHistory[0].pop();
+                // move to 
+                moveHistory[1][moveHistory[1].length] = tempHistory[1].pop();
+                // card
+                moveHistory[2][moveHistory[2].length] = tempHistory[2].pop();
+                // discovered check
+                moveHistory[3][moveHistory[3].length] = tempHistory[3].pop();
+            }
                         
         }
         else {
-            
             tableau[moveTo][tableau[moveTo].length] = moveFrom.pop();
             updateDisplay(moveFrom, moveTo);  
             
@@ -258,15 +270,20 @@ function moveTableauCard(moveFrom, moveTo, moveCard) {
 }
 
 function movePile(moveFrom, moveTo) {
-    for (let i=cardRow; i < pileLength; i++) {
-        cardPile[cardPile.length] = moveFrom.pop();                          
-            
+    for (let i=cardRow; i < pileLength; i++) {        
+        cardPile[cardPile.length] = moveFrom.pop(); 
         }
             
     for (let i=cardRow; i < pileLength; i++) {
 
+        if (i == cardRow) {
+            isUndiscovered = checkUndiscovered();
+        }
+        else {
+            isUndiscovered = false;
+        }
+        
         tableau[moveTo][tableau[moveTo].length] = cardPile.pop();
-          
         
         moveCard = tableau[moveTo][tableau[moveTo].length-1];
         whatCardId[2] = i+1;
@@ -279,6 +296,22 @@ function movePile(moveFrom, moveTo) {
         // change the zIndex on the tableauRow to layer it on top
         tableauRow.style.zIndex = (tableau[moveTo].length)*10;  
     }
+        
+}
+
+function checkUndiscovered() {
+    
+    try {
+        let cardUnder = document.getElementById("tableau-"+whatCardId[1]+"-"+(whatCardId[2]-1));    
+    
+        let cardSrc = (cardUnder.getAttribute("src") == "images/deck_backing.jpg");
+
+        return cardSrc;
+    }
+    catch (e) {
+        return false;
+    }
+    
 }
 
 // check value order of cards being moved
@@ -344,13 +377,13 @@ function foundationCheckOrder(moveFrom, moveTo) {
 function updateDisplay(moveFrom, moveTo, i) {
     showNextFrontImage(moveFrom);
     removeFrontImage(moveFrom, i);
-    showMovedFrontImage(moveTo);  
+    showMovedFrontImage(moveTo);
     consoleLogMoveTableau(moveTo+1);
 }
 
 function showNextFrontImage(moveFrom) {
     let imgId;
-    
+        
     if (whatClass[0] === "card") { 
 // displays next front image of the moveFrom tableau pile
         try {
@@ -385,6 +418,7 @@ function showNextFrontImage(moveFrom) {
 }
 
 function keepBlankCard(moveFrom) {
+
     if (whatClass[0] === "card") {
         // identify img element id
         let baseImgId = document.getElementById("tableau-"+tableauColFrom+"-1");
@@ -403,42 +437,76 @@ function keepBlankCard(moveFrom) {
     }
 }
 
+function showNextFrontImageFoundation(moveFrom) {
+    imgId = document.getElementById("foundation-"+two[1]);
+    try {
+        imgId.src = moveFrom[moveFrom.length-1].frontImage;
+    }
+    catch (e) {
+        imgId.src = "images/blank_card.png";
+    }
+}
+
+function showNextFrontImageWaste(moveFrom) {
+    imgId = document.getElementById("waste");
+    try {
+        imgId.src = waste[waste.length-1].frontImage;
+    }
+    // catch if there is no card (empty pile)
+    catch (e) {
+        imgId.src = "images/blank_card.png";
+    }
+}
+
 function removeFrontImage(moveFrom, i) {
     let imgId;
     let row;
     
-    if (whatClass[0] === "waste") {
-//        console.log("waste")
-    }
-    
-    else if (droppedTargetSplit[0] === "foundation" || toFoundation) {
-        // identify img element id
-        imgId = document.getElementById("tableau-"+tableauColFrom+"-"+(moveFrom.length+1));
-        // identify row
-        row = document.getElementById("tableau"+tableauColFrom+"-row"+(moveFrom.length+1));
-    }
-    else if (whatClass[0] === "foundation") {
-        imgId = document.getElementById("foundation-"+(whatCardId[1]));
-    }
-    else if (whatClass[0] === "card") {
-        // identify img element id
-        imgId = document.getElementById("tableau-"+tableauColFrom+"-"+(i+1));
-        // identify row
-        row = document.getElementById("tableau"+tableauColFrom+"-row"+(i+1));
-    }
-    
-    if (whatClass[0] === "card") {
-        // another card is available
-        // removes front image of the moveFrom tableau pile   
-        imgId.src = "";
-        imgId.style.display = "none";
+    if (undoFlag === true) {
+        
+        if (two[0] === "tableau") {
+            imgId = document.getElementById("tableau-"+two[1]+"-"+two[2]);
+            row = document.getElementById("tableau"+two[1]+"-row"+two[2]);
 
-//        if (whatClass[0] != "foundation") {
-            // layers row to the background
+            imgId.src = "";
+            imgId.style.display = "none";
             row.style.zIndex = 0;
+        }
+//        else if (one[0] === "waste" && two[0] === "tableau") {
+//            imgId = document.getElementById("tableau-"+two[1])
 //        }
+        
     }
-    keepBlankCard(moveFrom);    
+    else {
+        if (whatClass[0] === "waste");
+
+        else if (droppedTargetSplit[0] === "foundation" || toFoundation) {
+            // identify img element id
+            imgId = document.getElementById("tableau-"+tableauColFrom+"-"+(moveFrom.length+1));
+            // identify row
+            row = document.getElementById("tableau"+tableauColFrom+"-row"+(moveFrom.length+1));
+        }
+        else if (whatClass[0] === "foundation") {
+            imgId = document.getElementById("foundation-"+(whatCardId[1]));
+        }
+        else if (whatClass[0] === "card") {
+            // identify img element id
+            imgId = document.getElementById("tableau-"+tableauColFrom+"-"+(i+1));
+            // identify row
+            row = document.getElementById("tableau"+tableauColFrom+"-row"+(i+1));
+        }
+
+        if (whatClass[0] === "card") {
+            // another card is available
+            // removes front image of the moveFrom tableau pile   
+            imgId.src = "";
+            imgId.style.display = "none";
+
+            row.style.zIndex = 0;
+        }
+        keepBlankCard(moveFrom);
+    }
+    
 }
 
 // displays the moveFrom card in the moveTo tableau pile
@@ -462,6 +530,18 @@ function fillTableauSpot(moveFrom, moveTo) {
         }
         else if (whatClass[0] === "card") {
             movePile(moveFrom, moveTo);
+            
+            for (let i=cardRow; i < pileLength; i++) {
+                
+                // moved from
+                moveHistory[0][moveHistory[0].length] = tempHistory[0].pop();
+                // move to 
+                moveHistory[1][moveHistory[1].length] = tempHistory[1].pop();
+                // card
+                moveHistory[2][moveHistory[2].length] = tempHistory[2].pop();
+                // discovered check
+                moveHistory[3][moveHistory[3].length] = tempHistory[3].pop();
+            }
         }
         checkMove = false;
     }  
@@ -489,6 +569,9 @@ let toFoundation = false;
 
 // move card to foundation
 function moveFoundationCard(foundationPile, moveFrom) {
+    
+    isUndiscovered = checkUndiscovered();
+    
     // moves the moveFrom card to the foundationPile
     foundation[foundationPile][foundation[foundationPile].length] = moveFrom.pop();
     if (click === true) checkMove = false;
@@ -524,9 +607,19 @@ function clickStockpile() {
         // displays the front image of the top waste pile card
         document.getElementById("waste").src = waste[waste.length-1].frontImage; 
         let topWasteCard = waste[waste.length-1];
+        
         // console log the move
-        console.log(topWasteCard.value+" of "+topWasteCard.suit+" from stockpile to waste");
-    
+        console.log(topWasteCard.value+" of "+topWasteCard.suit+" from stock to waste");
+        
+        // moved from
+        moveHistory[0][moveHistory[0].length] = "stock";
+        // move to 
+        moveHistory[1][moveHistory[1].length] = "waste";
+        // card
+        moveHistory[2][moveHistory[2].length] = topWasteCard;
+        // check discovery
+        moveHistory[3][moveHistory[3].length] = false;
+
         // after move if the stockpile is empty show that there are no cards
         if (stock.length === 0) {
             document.getElementById("stock").src = "images/blank_card.png";
@@ -640,6 +733,7 @@ function queryHold() {
 
 // triggers when the drag is started
 function dragStart(event) {
+        
     // appends hold to class name for the first card being clicked and dragged
     this.className += ' hold';
         
@@ -677,11 +771,10 @@ function dragStart(event) {
             holdClass.className += ' hold';
             // appends invisible to class name
             holdClass.className += ' invisible';
-
         }
     }
-    // appends invisible to class name for the first card being clicked and dragged
-    // sets card selected to be invisible when dragged
+//     appends invisible to class name for the first card being clicked and dragged
+//     sets card selected to be invisible when dragged
     setTimeout(() => this.className += ' invisible', 0);
 }
 
@@ -782,6 +875,7 @@ function dragDrop(event) {
 let click;
 let checkMove;
 let breakMe;
+
 
 // listen for click on waste pile
 wasteQuery.addEventListener("click", onClickMove);
@@ -909,33 +1003,231 @@ function checkAvailability(moveCard, moveFrom) {
 
 // console log the move occur
 function consoleLogMoveFoundation(i) {
-    switch(whatClass[0]) {
+    if (undoFlag === false) {
+        switch(whatClass[0]) {
         case "waste":
-            console.log(moveCard.value+" of "+moveCard.suit+" from waste to foundation-"+i)
+            console.log(moveCard.value+" of "+moveCard.suit+" from waste to foundation-"+i);
+                
+            // moved from
+            moveHistory[0][moveHistory[0].length] = "waste";
+            // move to 
+            moveHistory[1][moveHistory[1].length] = "foundation-"+i;
+            // card
+            moveHistory[2][moveHistory[2].length] = moveCard;
+            // check discovery
+            moveHistory[3][moveHistory[3].length] = false;
+                
             break;
         case "card":
             console.log(moveCard.value+" of "+moveCard.suit+" from tableau-"+whatCardId[1]+"-"+whatCardId[2]+" to foundation-"+i);
+                            
+            // moved from
+            moveHistory[0][moveHistory[0].length] = "tableau-"+whatCardId[1]+"-"+whatCardId[2];
+            // move to 
+            moveHistory[1][moveHistory[1].length] = "foundation-"+i;
+            // card
+            moveHistory[2][moveHistory[2].length] = moveCard;
+            // check discovery
+            moveHistory[3][moveHistory[3].length] = isUndiscovered;
+                
             break;
         default:
             break;
+        }
     }
 }
 
 // console log the move occur
 function consoleLogMoveTableau(i) {
-    switch(whatClass[0]) {
+    if (undoFlag === false) {        
+        
+        switch(whatClass[0]) {
         case "waste":
             console.log(moveCard.value+" of "+moveCard.suit+" from waste to tableau-"+i+"-"+tableau[i-1].length)
+            
+            // moved from
+            moveHistory[0][moveHistory[0].length] = "waste";
+            // move to 
+            moveHistory[1][moveHistory[1].length] = "tableau-"+i+"-"+tableau[i-1].length;
+            // card
+            moveHistory[2][moveHistory[2].length] = moveCard;
+            // check discovery
+            moveHistory[3][moveHistory[3].length] = false;
+            
             break;
         case "card":
             console.log(moveCard.value+" of "+moveCard.suit+" from tableau-"+whatCardId[1]+"-"+whatCardId[2]+" to tableau-"+i+"-"+tableau[i-1].length);
+            
+            // moved from
+            tempHistory[0][tempHistory[0].length] = "tableau-"+whatCardId[1]+"-"+whatCardId[2];
+            // move to 
+            tempHistory[1][tempHistory[1].length] = "tableau-"+i+"-"+tableau[i-1].length;
+            // card
+            tempHistory[2][tempHistory[2].length] = moveCard;
+            // check discovery
+            tempHistory[3][tempHistory[3].length] = isUndiscovered;
+            
             break;
         case "foundation":
             console.log(moveCard.value+" of "+moveCard.suit+" from foundation-"+whatCardId[1]+" to tableau-"+i+"-"+tableau[i-1].length);
-        default:
+            
+            // moved from
+            moveHistory[0][moveHistory[0].length] = "foundation-"+whatCardId[1];
+            // move to 
+            moveHistory[1][moveHistory[1].length] = "tableau-"+i+"-"+tableau[i-1].length;
+            // card
+            moveHistory[2][moveHistory[2].length] = moveCard;
+            // check discovery
+            moveHistory[3][moveHistory[3].length] = isUndiscovered;
+            
             break;
-    }
+        default:
+            break;                
+        }
+    }    
 }
 
 // TESTING
+
+// array placements
+// 0 is moveFrom
+// 1 is moveTo
+// 2 is moveCard
+// 3 is checkUndiscovered
+
+let tempHistory = [[],[],[],[]];
+let moveHistory = [[],[],[],[]];
+let undoFlag = false;
+let one, two;
+let isUndiscovered;
+
+function undo() {
+    
+    // if moveHistory is not empty
+    if (moveHistory[0] != 0) {
+        let moveTo, moveFrom, moveCard, historyIndex, undiscovered;
+        undoFlag = true;
+
+        one = moveHistory[0][moveHistory[0].length-1].split("-");
+        two = moveHistory[1][moveHistory[1].length-1].split("-");
+
+        // tableau to tableau
+        if (one[0] === "tableau" && two[0] === "tableau") {
+            moveTo = one[1]-1;
+            moveFrom = tableau[two[1]-1];
+            moveCard = moveHistory[2][moveHistory[2].length-1];
+            undiscovered = moveHistory[3][moveHistory[3].length-1];
+
+            // moves the card
+            tableau[moveTo][tableau[moveTo].length] = moveCard;
+            
+            // removes the card from the moveFrom pile
+            historyIndex = moveFrom.indexOf(moveCard);
+            moveFrom.splice(historyIndex,1);
+
+            // update display
+            removeFrontImage(moveFrom);
+            showMovedFrontImage(moveTo);
+
+            // identify the tableau row
+            let tableauRow = document.getElementById("tableau"+(moveTo+1)+"-row"+(tableau[moveTo].length));
+
+            // change the zIndex on the tableauRow to layer it on top
+            tableauRow.style.zIndex = (tableau[moveTo].length)*10;
+            
+            if (undiscovered == true) {
+                let cardUnder = document.getElementById("tableau-"+one[1]+"-"+(one[2]-1));
+                cardUnder.src = "images/deck_backing.jpg";
+            }
+            
+        }
+        // stock to waste
+        else if (one[0] === "stock" && two[0] === "waste") {
+            moveTo = stock;
+            moveFrom = waste;
+            moveCard = waste.length-1;
+            
+            // moves card to moveTo pile from the moveFrom pile
+            moveTo[moveTo.length] = moveFrom.pop();
+            
+            // update display
+            removeFrontImage(moveFrom);
+            showNextFrontImageWaste(moveFrom);
+        }
+        // waste to tableau
+        else if (one[0] === "waste" && two[0] === "tableau") {
+            moveTo = waste;
+            moveFrom = tableau[two[1]-1];
+            moveCard = moveHistory[2][moveHistory[2].length-1];
+            
+            // moves card to moveTo pile from the moveFrom pile
+            moveTo[moveTo.length] = moveFrom.pop();
+            
+            // update display
+            removeFrontImage(moveFrom);
+            showNextFrontImageWaste(moveFrom);
+        }
+        // waste to foundation
+        else if (one[0] === "waste" && two[0] === "foundation") {
+            moveTo = waste;
+            moveFrom = foundation[two[1]-1];
+            moveCard = moveHistory[2][moveHistory[2].length-1];
+            
+            // moves card to moveTo pile from the moveFrom pile
+            moveTo[moveTo.length] = moveFrom.pop();
+            
+            // update display
+            showNextFrontImageFoundation(moveFrom);
+            showNextFrontImageWaste(moveFrom);
+        }
+        // tableau to foundation
+        else if (one[0] === "tableau" && two[0] === "foundation") {
+            moveTo = one[1]-1;
+            moveFrom = foundation[two[1]-1];
+            moveCard = moveHistory[2][moveHistory[2].length-1];
+            undiscovered = moveHistory[3][moveHistory[3].length-1];
+            
+            // moves the card
+            tableau[moveTo][tableau[moveTo].length] = moveFrom.pop();
+            
+            // update display
+            showNextFrontImageFoundation(moveFrom);
+            showMovedFrontImage(moveTo);
+            
+            // identify the tableau row
+            let tableauRow = document.getElementById("tableau"+(moveTo+1)+"-row"+(tableau[moveTo].length));
+
+            // change the zIndex on the tableauRow to layer it on top
+            tableauRow.style.zIndex = (tableau[moveTo].length)*10;
+            
+            if (undiscovered == true) {
+                let cardUnder = document.getElementById("tableau-"+one[1]+"-"+(one[2]-1));
+                cardUnder.src = "images/deck_backing.jpg";
+            }
+        }
+        // foundation to tableau
+        else if (one[0] === "foundation" && two[0] === "tableau") {
+            moveTo = foundation[one[1]-1];
+            moveFrom = tableau[two[1]-1];
+            moveCard = moveHistory[2][moveHistory[2].length-1];
+            
+            // moves card to moveTo pile from the moveFrom pile
+            moveTo[moveTo.length] = moveFrom.pop();
+            
+            // update display
+            removeFrontImage(moveFrom);
+            showNextFrontImage(moveFrom);
+            displayFoundationImage(one[1]-1);
+        }
+        
+        moveHistory[0].pop();
+        moveHistory[1].pop();
+        moveHistory[2].pop();
+        moveHistory[3].pop();
+        undoFlag = false;
+    }
+    
+    
+    
+}
 
