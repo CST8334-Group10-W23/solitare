@@ -557,7 +557,7 @@ function layerSetup() {
     for (let j=0; j < 7; j++) {
 
         // tableau cards in pile
-        for (let i=0; i < 13; i++) {
+        for (let i=0; i < 19; i++) {
 
             // individual tableau card spots
             let tableauCard = tableau[j][i];
