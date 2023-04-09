@@ -4,6 +4,8 @@
 
 body {
 background-image: url("images/table-background-alt.jpg");
+    background-repeat: no-repeat;
+    background-size: cover
 }
 
 img {
@@ -25,7 +27,7 @@ td {
 
 table {
     min-height: 13.66rem;
-    border-spacing: 1.4rem;
+    border-spacing: 1.4rem 0rem;
     display: inline-block;
 }
 
@@ -62,98 +64,102 @@ button {
     border-style: hidden;
 }
 
+.tableau tr {
+    z-index: -1;
+}
+
 .tableau-row1 {
     position: absolute;
 }
 
 .tableau-row2 {
     position: absolute;
-    top: 3.5rem;
+    top: 2rem;
 }
 
 .tableau-row3 {
     position: absolute;
-    top: 5.5rem;
+    top: 4rem;
 }
 
 .tableau-row4 {
     position: absolute;
-    top: 7.5rem;
+    top: 6rem;
 }
 
 .tableau-row5 {
    position: absolute;
-    top: 9.5rem;
+    top: 8rem;
 }
 
 .tableau-row6 {
     position: absolute;
-    top: 11.5rem;
+    top: 10rem;
 }
 
 .tableau-row7 {
     position: absolute;
-    top: 13.5rem;
+    top: 12rem;
 }
 
 .tableau-row8 {
     position: absolute;
-    top: 15.5rem;
+    top: 14rem;
 }
 
 .tableau-row9 {
     position: absolute;
-    top: 17.5rem;
+    top: 16rem;
 }
 
 .tableau-row10 {
     position: absolute;
-    top: 19.5rem;
+    top: 18rem;
 }
 
 .tableau-row11 {
     position: absolute;
-    top: 21.5rem;
+    top: 20rem;
 }
 
 .tableau-row12 {
     position: absolute;
-    top: 23.5rem;
+    top: 22rem;
 }
 
 .tableau-row13 {
     position: absolute;
-    top: 25.5rem;
+    top: 24rem;
 }
 
 .tableau-row14 {
     position: absolute;
-    top: 27.5rem;
+    top: 26rem;
 }
 
 .tableau-row15 {
     position: absolute;
-    top: 29.5rem;
+    top: 28rem;
 }
 
 .tableau-row16 {
     position: absolute;
-    top: 31.5rem;
+    top: 30rem;
 }
 
 .tableau-row17 {
     position: absolute;
-    top: 33.5rem;
+    top: 32rem;
 }
 
 .tableau-row18 {
     position: absolute;
-    top: 35.5rem;
+    top: 34rem;
 }
 
 .tableau-row19 {
     position: absolute;
-    top: 37.5rem;
+    top: 36rem;
 }
 
 /* Table columns

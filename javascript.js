@@ -6,9 +6,30 @@
 
 // Array of suits
 const suits = ["hearts", "diamonds", "spades", "clubs"];
-
 // Array of values
 const values = ["ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"];
+
+// Whether Vegas Mode is on or off
+var vegasMode = false;
+
+// Vegas mode button
+function startVegas() {
+    sessionStorage.setItem("vegas", "true");
+    document.location.reload();
+}
+
+// Checks if Vegas mode is in effect every window reload
+window.onload = function() {
+    var vegas = sessionStorage.getItem("vegas");
+    if (vegas) {
+        sessionStorage.removeItem("vegas");
+        // Enable vegasMode global to alter scoring rules
+        vegasMode = true;
+        // Visual indication of Vegas Mode
+        document.body.style.backgroundImage = "url(images/table-background-vegas.jpg)"
+    }
+}
+
 function createDeck() {
   // Class deck represents a deck of cards
   class Deck {
