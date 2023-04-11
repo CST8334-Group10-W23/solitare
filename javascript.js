@@ -513,6 +513,17 @@ function removeFrontImage(moveFrom, i) {
       imgId.src = "";
       imgId.style.display = "none";
       row.style.zIndex = 0;
+      
+      if (moveFrom.length == 0) {
+        let baseImgId = document.getElementById("tableau-"+two[1]+"-1");
+        baseImgId.src = "images/blank_card.png";
+        baseImgId.style.display = "";
+        if (whatClass[0] != "foundation") {
+            let row = document.getElementById("tableau" + tableauColFrom + "-row1");
+            row.style.zIndex = 10;
+        }
+      }
+        
     }
     //        else if (one[0] === "waste" && two[0] === "tableau") {
     //            imgId = document.getElementById("tableau-"+two[1])
