@@ -1191,18 +1191,32 @@ function undo() {
       }
     }
     // stock to waste
-    else if (one[0] === "stock" && two[0] === "waste") {
+    else if (one[0] === "stock" && two[0] === "waste") {    
       moveTo = stock;
       moveFrom = waste;
       moveCard = waste.length - 1;
       movePileLength = moveHistory[4][moveHistory[4].length - 1];
 
+      let stockLength = stock.length;
+      let isWasteEmpty = (waste.length <= 0);
+      console.log(isWasteEmpty);
+      if (isWasteEmpty) {
+        for (let i = 0; i < stockLength; i++) {
+        waste[waste.length] = stock.shift();
+        }
+      waste.reverse();
+      showNextFrontImageWaste(moveFrom);
+      return;
+      }
+      else {      
+        
       // moves card to moveTo pile from the moveFrom pile
       moveTo[moveTo.length] = moveFrom.pop();
 
       // update display
       removeFrontImage(moveFrom);
       showNextFrontImageWaste(moveFrom);
+      }
     }
     // waste to tableau
     else if (one[0] === "waste" && two[0] === "tableau") {
