@@ -427,11 +427,11 @@ function foundationCheckOrder(moveFrom, moveTo) {
 
 // updates tableau display after a moveTableauCard has occurred
 function updateDisplay(moveFrom, moveTo, i) {
-  checkWin();
   showNextFrontImage(moveFrom);
   removeFrontImage(moveFrom, i);
   showMovedFrontImage(moveTo);
   consoleLogMoveTableau(moveTo + 1, i);
+  
 }
 
 function showNextFrontImage(moveFrom) {
@@ -629,6 +629,9 @@ function moveFoundationCard(foundationPile, moveFrom) {
 
   consoleLogMoveFoundation(foundationPile + 1);
   toFoundation = false;
+    
+  // checks for winner
+  winner();
 }
 
 // click listener for stock pile
@@ -1134,8 +1137,6 @@ function consoleLogMoveTableau(i, x) {
   }
 }
 
-// TESTING
-
 // array placements
 // 0 is moveFrom
 // 1 is moveTo
@@ -1197,9 +1198,10 @@ function undo() {
       moveCard = waste.length - 1;
       movePileLength = moveHistory[4][moveHistory[4].length - 1];
 
+      // bug fix for the stock pile showing as undefined, when using the undo button
       let stockLength = stock.length;
       let isWasteEmpty = (waste.length <= 0);
-      console.log(isWasteEmpty);
+//      console.log(isWasteEmpty);
       if (isWasteEmpty) {
         for (let i = 0; i < stockLength; i++) {
         waste[waste.length] = stock.shift();
@@ -1298,6 +1300,7 @@ function undo() {
   }
 }
 
+// undo latest move history after undo function has executed
 function popUndo() {
     moveHistory[0].pop();
     moveHistory[1].pop();
@@ -1307,16 +1310,31 @@ function popUndo() {
     undoFlag = false;
 }
 
-function checkWin() {
-  let didWin = true;
+//function checkWin() {
+//  let didWin = true;
+//
+//  tableau.forEach((t) => {
+//    if (t.length !== 0) {
+//      didWin = false;
+//    }
+//  });
+//
+//  if (didWin) {
+//    alert("You win!");
+//  }
+//}
 
-  tableau.forEach((t) => {
-    if (t.length !== 0) {
-      didWin = false;
+// checks for winner
+function winner() {
+    // each foundation must have 13 cards to be true 
+    let foundationOne = (foundation[0].length == 13);
+    let foundationTwo = (foundation[1].length == 13);
+    let foundationThree = (foundation[2].length == 13);
+    let foundationFour = (foundation[3].length == 13);
+
+    // check if all foundations are full
+    if (foundationOne && foundationTwo && foundationThree && foundationFour) {
+        // display you win alert
+        alert("YOU WIN! \nFINAL SCORE IS: "+scoringSystem.score);
     }
-  });
-
-  if (didWin) {
-    alert("You win!");
-  }
 }
