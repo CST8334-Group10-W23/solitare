@@ -664,17 +664,22 @@ function clickStockpile() {
 
 // function to refill the stock pile when empty
 function refillStockpile() {
-  // get the length of the waste array
-  let wasteLength = waste.length;
-  // cycle through and put the waste pile back into the stock pile
-  // keeping the original sequence
-  for (let i = 0; i < wasteLength; i++) {
-    stock[stock.length] = waste.pop();
-  }
-  // remove the front image on the top waste pile card
-  document.getElementById("waste").src = "images/blank_card.png";
-  document.getElementById("stock").src = "images/deck_backing.jpg";
-  console.log("STOCKPILE REFILLED");
+    if (vegasMode == true) {
+        console.log("NO RESTOCKING IN VEGAS MODE");
+    }
+    else {
+      // get the length of the waste array
+      let wasteLength = waste.length;
+      // cycle through and put the waste pile back into the stock pile
+      // keeping the original sequence
+      for (let i = 0; i < wasteLength; i++) {
+        stock[stock.length] = waste.pop();
+      }
+      // remove the front image on the top waste pile card
+      document.getElementById("waste").src = "images/blank_card.png";
+      document.getElementById("stock").src = "images/deck_backing.jpg";
+      console.log("STOCKPILE REFILLED");
+    }  
 }
 
 // hide empty img elements and layer cards for tableau setup
