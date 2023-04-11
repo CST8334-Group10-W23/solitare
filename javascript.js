@@ -299,8 +299,8 @@ function moveTableauCard(moveFrom, moveTo, moveCard) {
   else {
     // move card from one array pile to another
     if (whatClass[0] === "card") {
-      movePile(moveFrom, moveTo);
-
+      movePile(moveFrom, moveTo);    
+        
       for (let i = cardRow; i < pileLength; i++) {
         // moved from
         moveHistory[0][moveHistory[0].length] = tempHistory[0].pop();
@@ -310,6 +310,8 @@ function moveTableauCard(moveFrom, moveTo, moveCard) {
         moveHistory[2][moveHistory[2].length] = tempHistory[2].pop();
         // discovered check
         moveHistory[3][moveHistory[3].length] = tempHistory[3].pop();
+        // movePileLength
+        moveHistory[4][moveHistory[4].length] = tempHistory[4].pop();
       }
     } else {
       tableau[moveTo][tableau[moveTo].length] = moveFrom.pop();
@@ -429,7 +431,7 @@ function updateDisplay(moveFrom, moveTo, i) {
   showNextFrontImage(moveFrom);
   removeFrontImage(moveFrom, i);
   showMovedFrontImage(moveTo);
-  consoleLogMoveTableau(moveTo + 1);
+  consoleLogMoveTableau(moveTo + 1, i);
 }
 
 function showNextFrontImage(moveFrom) {
@@ -572,6 +574,8 @@ function fillTableauSpot(moveFrom, moveTo) {
         moveHistory[2][moveHistory[2].length] = tempHistory[2].pop();
         // discovered check
         moveHistory[3][moveHistory[3].length] = tempHistory[3].pop();
+        // movePileLength
+        moveHistory[4][moveHistory[4].length] = tempHistory[4].pop();
       }
     }
     checkMove = false;
@@ -648,6 +652,8 @@ function clickStockpile() {
     moveHistory[2][moveHistory[2].length] = topWasteCard;
     // check discovery
     moveHistory[3][moveHistory[3].length] = false;
+    // movePileHistory
+    moveHistory[4][moveHistory[4].length] = 1;
 
     // after move if the stockpile is empty show that there are no cards
     if (stock.length === 0) {
@@ -1029,6 +1035,8 @@ function consoleLogMoveFoundation(i) {
         moveHistory[2][moveHistory[2].length] = moveCard;
         // check discovery
         moveHistory[3][moveHistory[3].length] = false;
+        // movePileLength
+        moveHistory[4][moveHistory[4].length] = 1;
 
         break;
       case "card":
@@ -1042,6 +1050,8 @@ function consoleLogMoveFoundation(i) {
         moveHistory[2][moveHistory[2].length] = moveCard;
         // check discovery
         moveHistory[3][moveHistory[3].length] = isUndiscovered;
+        // movePileLength
+        moveHistory[4][moveHistory[4].length] = 1;
 
         break;
       default:
@@ -1051,7 +1061,7 @@ function consoleLogMoveFoundation(i) {
 }
 
 // console log the move occur
-function consoleLogMoveTableau(i) {
+function consoleLogMoveTableau(i, x) {
   if (undoFlag === false) {
     switch (whatClass[0]) {
       case "waste":
@@ -1066,6 +1076,8 @@ function consoleLogMoveTableau(i) {
         moveHistory[2][moveHistory[2].length] = moveCard;
         // check discovery
         moveHistory[3][moveHistory[3].length] = false;
+        // movePileLength
+        moveHistory[4][moveHistory[4].length] = 1;
 
         break;
       case "card":
@@ -1080,6 +1092,9 @@ function consoleLogMoveTableau(i) {
         tempHistory[2][tempHistory[2].length] = moveCard;
         // check discovery
         tempHistory[3][tempHistory[3].length] = isUndiscovered;
+        // movePileLength
+        tempHistory[4][tempHistory[4].length] = pileLength-x;
+            
 
         break;
       case "foundation":
@@ -1093,6 +1108,8 @@ function consoleLogMoveTableau(i) {
         moveHistory[2][moveHistory[2].length] = moveCard;
         // check discovery
         moveHistory[3][moveHistory[3].length] = isUndiscovered;
+        // movePileLength
+        moveHistory[4][moveHistory[4].length] = 1;
 
         break;
       default:
@@ -1108,12 +1125,14 @@ function consoleLogMoveTableau(i) {
 // 1 is moveTo
 // 2 is moveCard
 // 3 is checkUndiscovered
+// 4 is movePileLength
 
-let tempHistory = [[], [], [], []];
-let moveHistory = [[], [], [], []];
+let tempHistory = [[], [], [], [], []];
+let moveHistory = [[], [], [], [], []];
 let undoFlag = false;
 let one, two;
 let isUndiscovered;
+let movePileLength;
 
 function undo() {
   // if moveHistory is not empty
@@ -1131,6 +1150,7 @@ function undo() {
       moveFrom = tableau[two[1] - 1];
       moveCard = moveHistory[2][moveHistory[2].length - 1];
       undiscovered = moveHistory[3][moveHistory[3].length - 1];
+      movePileLength = moveHistory[4][moveHistory[4].length - 1];
 
       // moves the card
       tableau[moveTo][tableau[moveTo].length] = moveCard;
@@ -1159,6 +1179,7 @@ function undo() {
       moveTo = stock;
       moveFrom = waste;
       moveCard = waste.length - 1;
+      movePileLength = moveHistory[4][moveHistory[4].length - 1];
 
       // moves card to moveTo pile from the moveFrom pile
       moveTo[moveTo.length] = moveFrom.pop();
@@ -1172,6 +1193,7 @@ function undo() {
       moveTo = waste;
       moveFrom = tableau[two[1] - 1];
       moveCard = moveHistory[2][moveHistory[2].length - 1];
+      movePileLength = moveHistory[4][moveHistory[4].length - 1];
 
       // moves card to moveTo pile from the moveFrom pile
       moveTo[moveTo.length] = moveFrom.pop();
@@ -1185,6 +1207,7 @@ function undo() {
       moveTo = waste;
       moveFrom = foundation[two[1] - 1];
       moveCard = moveHistory[2][moveHistory[2].length - 1];
+      movePileLength = moveHistory[4][moveHistory[4].length - 1];
 
       // moves card to moveTo pile from the moveFrom pile
       moveTo[moveTo.length] = moveFrom.pop();
@@ -1199,6 +1222,7 @@ function undo() {
       moveFrom = foundation[two[1] - 1];
       moveCard = moveHistory[2][moveHistory[2].length - 1];
       undiscovered = moveHistory[3][moveHistory[3].length - 1];
+      movePileLength = moveHistory[4][moveHistory[4].length - 1];
 
       // moves the card
       tableau[moveTo][tableau[moveTo].length] = moveFrom.pop();
@@ -1223,6 +1247,7 @@ function undo() {
       moveTo = foundation[one[1] - 1];
       moveFrom = tableau[two[1] - 1];
       moveCard = moveHistory[2][moveHistory[2].length - 1];
+      movePileLength = moveHistory[4][moveHistory[4].length - 1];
 
       // moves card to moveTo pile from the moveFrom pile
       moveTo[moveTo.length] = moveFrom.pop();
@@ -1232,13 +1257,24 @@ function undo() {
       showNextFrontImage(moveFrom);
       displayFoundationImage(one[1] - 1);
     }
+      
+    if (movePileLength > 1) {
+        popUndo();
+        undo(); 
+    }
+    else {
+        popUndo();
+    }
+  }
+}
 
+function popUndo() {
     moveHistory[0].pop();
     moveHistory[1].pop();
     moveHistory[2].pop();
     moveHistory[3].pop();
+    moveHistory[4].pop();
     undoFlag = false;
-  }
 }
 
 function checkWin() {
