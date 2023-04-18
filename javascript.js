@@ -629,7 +629,7 @@ function moveFoundationCard(foundationPile, moveFrom) {
 
   consoleLogMoveFoundation(foundationPile + 1);
   toFoundation = false;
-    
+
   // checks for winner
   winner();
 }
@@ -1326,15 +1326,41 @@ function popUndo() {
 
 // checks for winner
 function winner() {
+    
     // each foundation must have 13 cards to be true 
     let foundationOne = (foundation[0].length == 13);
     let foundationTwo = (foundation[1].length == 13);
     let foundationThree = (foundation[2].length == 13);
     let foundationFour = (foundation[3].length == 13);
+    
+    function check() {
+        console.log("check");
+        if (foundationOne && foundationTwo && foundationThree && foundationFour) {
+            // display you win alert
+            alert("YOU WIN! \nFINAL SCORE IS: "+scoringSystem.score);
+        }
+    }
 
     // check if all foundations are full
-    if (foundationOne && foundationTwo && foundationThree && foundationFour) {
-        // display you win alert
-        alert("YOU WIN! \nFINAL SCORE IS: "+scoringSystem.score);
-    }
+    setTimeout(() => {  check() }, 200);    
+}
+
+function endGame() {
+
+ // checks if user is winner/has won game
+ if (winner()) {
+   // if so, show subsequent confirmation dialog
+   if (confirm("You have won the game! Do you want to end the game?")) {
+     // if the user confirms, reset the game
+     location.reload();
+   }
+ } else {
+   // if the player hasn't won, show the confirmation dialog
+
+   if (confirm("Your score is: "+scoringSystem.score+"\n\nAre you sure you want to end the game?")) {
+
+     // if the user confirms, reset the game
+     location.reload();
+   }
+ }
 }
