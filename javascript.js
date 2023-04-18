@@ -11,6 +11,7 @@ const values = ["ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "qu
 
 // Whether Vegas Mode is on or off
 var vegasMode = false;
+var scoringSystem;
 
 // Vegas mode button
 function startVegas() {
@@ -25,6 +26,10 @@ window.onload = function() {
         sessionStorage.removeItem("vegas");
         // Enable vegasMode global to alter scoring rules
         vegasMode = true;
+        if (vegasMode) {
+            scoringSystem = new VegasScoring();
+            scoringSystem.setBuyin();
+        }
         // Visual indication of Vegas Mode
         document.body.style.backgroundImage = "url(images/table-background-vegas.jpg)"
     }
@@ -118,7 +123,69 @@ class SolitaireScoring {
   }
 }
 
-const scoringSystem = new SolitaireScoring();
+// Vegas Scoring
+class VegasScoring {
+  constructor(options = { scores: { foundation: 5, deal: 0, rowToRow: 0, suitToRow: 0, win: 0 } }) {
+    this.scores = options.scores;
+    this.display = document.getElementById("score");
+    this.score = 0;
+  }
+
+  // Set buy-in score
+  setBuyin() {
+    this.score = -52;
+    this.display.innerText = "$" + this.score;
+    }
+        
+  // Add points to the score.
+  addScore(points) {
+    this.score += points;
+    this.display.innerText = "$" + this.score;
+    this.lastScore = points;
+  }
+
+  // Called when a card is dealt from the deck.
+  deal() {
+    // Add the deal score to the score.
+    this.addScore(this.scores.deal);
+  }
+
+  // Called when a card is moved to the foundation.
+  foundation() {
+    // Add the foundation score to the score.
+    this.addScore(this.scores.foundation);
+  }
+
+  rowToRow() {
+    this.addScore(this.scores.rowToRow);
+  }
+
+  suitToRow() {
+    this.addScore(this.scores.suitToRow);
+  }
+
+  undo() {
+    this.addScore(-this.lastScore);
+  }
+
+  // Called when the game is won.
+  win() {
+    // Add the win score to the score.
+    this.addScore(this.scores.win);
+  }
+}
+
+
+// Initialize Vegas Mode scoring
+if (vegasMode) {
+    scoringSystem = new VegasScoring();
+}
+// Initialize Regular Mode scoring
+else {
+    scoringSystem = new SolitaireScoring();
+}
+
+
 
 // stock pile
 const stock = stockPile();
@@ -1356,7 +1423,6 @@ function endGame() {
    }
  } else {
    // if the player hasn't won, show the confirmation dialog
-
    if (confirm("Your score is: "+scoringSystem.score+"\n\nAre you sure you want to end the game?")) {
 
      // if the user confirms, reset the game
