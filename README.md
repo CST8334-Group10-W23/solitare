@@ -1,6 +1,9 @@
 # Solitaire for Browser and Desktop
 A re-imagining of the classic single-player card game, available in browser or as a download for offline desktop play.
 
+Play in-browser: https://cst8334-group10-w23.github.io/solitare/
+<br>Download for desktop (Windows/Linux): https://github.com/CST8334-Group10-W23/solitare/releases/tag/v3.0
+
 Contributors: Daniel Longo, Connor McComb, Alexander Muns, Bakr Matlab
 <br><em>Created using HTML, CSS, and JavaScript. Deployed to desktop with Electron.</em>
 
